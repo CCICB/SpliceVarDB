@@ -1,4 +1,4 @@
-const apiURL = 'http://127.0.0.1:5000/splicevardb/variants'
+const apiURL = 'http://10.10.70.17/splicevardb/variants'
 const myVariant = 'http://myvariant.info/v1/variant/'
 const clinvar = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&retmode=json&id="
 const myGene = "http://mygene.info/v3/gene/"
