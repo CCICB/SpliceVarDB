@@ -1,0 +1,258 @@
+.nav {
+    overflow: hidden;
+    font-family: "lato", sans-serif;
+    background-color: #00965c;
+    border: 1px solid #e7e7e7;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 5;
+}
+
+.nav a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.nav a:hover, .dropdown:hover .dropbtn {
+    background-color: #0a7154;
+}
+
+.dropdown a:hover {
+    background-color: #efefef;
+}
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown .dropbtn {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    font-family: inherit;
+    background-color: inherit;
+    margin: 0;
+}
+
+.dropdown-content {
+    display: none;
+    color: black !important;
+    position: fixed;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    position: fixed;
+    top: 48px;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.content {
+    padding-top: 70px;
+    margin: 0px 40px;
+}
+
+.content ul {
+  margin-top: 0 !important;
+}
+
+.content li {
+  line-height: 0.95em;
+}
+
+.button.is-ccigreen {
+    background-color: #00965c;
+    color: white;
+}
+
+.progress.is-ccigreen:indeterminate {
+    background-image: linear-gradient(to right,#00965c 30%,#ededed 30%);
+}
+
+/* Button genome build */
+#button-build .knobs:before {
+  content: "hg19";
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 32px;
+  height: 14px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1;
+  padding: 9px 4px;
+  background-color: #f44336;
+  border-radius: 50%;
+  transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+}
+
+#button-build .checkbox:checked + .knobs:before {
+  content: "hg38";
+  left: 42px;
+  background-color: #03a9f4;
+}
+
+#button-build .checkbox:checked ~ .layer {
+  background-color: #ebf7fc;
+}
+
+#button-build .knobs,
+#button-build .knobs:before,
+#button-build .layer {
+  transition: 0.3s ease all;
+}
+
+.checkbox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.layer {
+  width: 100%;
+  background-color: #fcebeb;
+  transition: 0.3s ease all;
+  z-index: 1;
+}
+
+.knobs {
+  z-index: 2;
+  box-sizing: content-box;
+}
+
+.swap_button.r,
+.swap_button.r .layer {
+  border-radius: 50px;
+}
+
+.swap_button {
+  position: relative;
+  width: 86px;
+  height: 36px;
+  overflow: hidden;
+}
+
+.button-cover {
+  margin: 20px;
+  background-color: #fff;
+  box-shadow: 0 10px 20px -8px #c5d6d6;
+  border-radius: 4px;
+}
+
+.button-cover:before {
+  counter-increment: button-counter;
+  content: counter(button-counter);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #d7e3e3;
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px;
+}
+
+.button-cover,
+.knobs,
+.layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+}
+
+#lollipop_placeholder {
+    display: block;
+    text-align: center;
+    margin: 10px auto;
+}
+
+/* ProteinPaint edits */
+.sjpp-dshandleholder, .sja_handle_green {
+    display: none !important;
+}
+
+td .columns {
+    margin-left: 38px;
+    padding-bottom: 10px;
+}
+
+td .columns p {
+    font-size: 0.95em;
+    margin: 0px !important ;
+}
+
+/* ClinVar Display box */
+.clinvar {
+    border: 1px #878787 solid;
+    border-radius: 6px;
+    width: 150px;
+    padding: 5px;
+}
+
+
+.clinvar h5 {
+    text-align: center;
+    margin: 0px !important;
+    font-size: 0.9em !important;
+}
+
+/* Stars for ClinVar*/
+
+:root {
+  --star-size: 30px;
+  --star-color: white;
+  --star-background: gold;
+}
+
+.clinvar-star {
+  --percent: calc(var(--rating) / 4 * 100%);
+  display: block;
+  font-size: var(--star-size);
+  font-family: Times;
+  line-height: 1;
+  margin: 0 auto;
+  width: 129px;
+}
+
+.clinvar-star::before {
+    content: '★★★★';
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

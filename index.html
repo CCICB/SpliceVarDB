@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CompBio</title>
+        <link rel="stylesheet" href="../static/css/home.css">
+        <script
+          src="http://code.jquery.com/jquery-3.3.1.min.js"
+          integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+          crossorigin="anonymous">
+        </script>
+        <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+        <link href="https://cdn.datatables.net/searchbuilder/1.4.0/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.datatables.net/searchbuilder/1.4.0/js/dataTables.searchBuilder.js"></script>
+        <link href="https://cdn.datatables.net/select/1.6.1/css/select.dataTables.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.datatables.net/select/1.6.1/js/dataTables.select.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/igv@2.13.9/dist/igv.min.js"></script>
+        <script src="https://proteinpaint.stjude.org/bin/proteinpaint.js" charset="utf-8" async></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+    </head>
+    <body>
+        <div class="nav">
+            <a href="interpretation.html" style="padding-right: 60px"><b>CCIA CompBio Lab</b></a>
+            <a href="Home">Home</a>
+            <a href="Members">Members</a>
+            <div class="dropdown">
+                <a class="dropbtn">Tools</a>
+                <div class="dropdown-content">
+                    <a href="CRUX">CRUX</a>
+                    <a href="disTIL">disTIL</a>
+                    <a href="Graphene">Graphene</a>
+                    <a href="Helium">Helium</a>
+                    <a href="Primadyne">Primadyne</a>
+                    <a href="SpliceInterpreter">SpliceInterpreter</a>
+                    <a href="SpliceVarDB">SpliceVarDB</a>
+                    <a href="Zerodash">Zerodash</a>
+                </div>
+            </div>
+            <a href="Publications">Publications</a>
+            <a href="Jobs">Available Positions</a>
+        </div>
+
+        <div class="content">
+            <div class="block">
+                <h1 class="title">SpliceVarDB</h1>
+            </div>
+
+            <div id="gene_plot" class="box">
+                <span id="lollipop_placeholder">– Lollipop gene plot will display when only one gene is returned –</span>
+                <progress id="lollipop_loader" class="progress is-ccigreen is-small" max="100">30%</progress>
+                <div id="lollipop">
+                </div>
+            </div>
+
+            <div class="block box variants" id="results">
+                <div class="is-horizontal">
+                    <h4 class="title is-4" id="results_sentence">Variants</h4>
+                </div>
+                <table class="table is-hoverable">
+                    <thead>
+                        <tr id="table-head">
+                            <th>+</th>
+                            <th>Variant</th>
+                            <th>Gene</th>
+                            <th>HGVS</th>
+                            <th>Validation</th>
+                            <th>Classification</th>
+                        </tr>
+                    </thead>
+                    <tbody id="displayVariants">
+                    </tbody>
+                </table>
+                <div class="error"></div>
+            </div>
+        </div>
+    </body>
+    <script src="../static/js/home.js" defer></script>
+</html>
