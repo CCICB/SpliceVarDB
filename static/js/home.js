@@ -119,7 +119,7 @@ function appendData(variants) {
                 },
                 { data: 'chr' },
                 { data: 'gene_symbol' },
-                { data: 'HGVS' },
+                { data: 'transcript_id' },
                 { data: 'validation'},
                 { data: 'classification'},
             ],
@@ -262,8 +262,7 @@ function convert_to_protein_paint(snv) {
             'pos': Number(variant.pos_hg19),
             'ref': variant.ref,
             'alt': variant.alt,
-            'class': classifier,
-            'mname': variant.HGVS
+            'class': classifier
         }
         result.push(plot_item);
     });
