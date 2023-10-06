@@ -1,75 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <meta charset="utf-8">
+        <!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-QZ5H8T2136"></script>
+	<script>
+  	    window.dataLayer = window.dataLayer || [];
+  	    function gtag(){dataLayer.push(arguments);}
+    	    gtag('js', new Date());
+  	    gtag('config', 'G-QZ5H8T2136');
+	</script>
+	<meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>CompBio</title>
-        <link rel="stylesheet" href="../static/css/home.css">
-        <script
-          src="http://code.jquery.com/jquery-3.3.1.min.js"
-          integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-          crossorigin="anonymous">
-        </script>
-        <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
-        <link href="https://cdn.datatables.net/searchbuilder/1.4.0/css/searchBuilder.dataTables.css" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.datatables.net/searchbuilder/1.4.0/js/dataTables.searchBuilder.js"></script>
-        <link href="https://cdn.datatables.net/select/1.6.1/css/select.dataTables.min.css" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.datatables.net/select/1.6.1/js/dataTables.select.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/igv@2.13.9/dist/igv.min.js"></script>
+        <title>SpliceVarDB</title>
+        <link rel="stylesheet" href="splicevardb/static/css/home.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/igv@2.15.10/dist/igv.min.js"></script>
         <script src="https://proteinpaint.stjude.org/bin/proteinpaint.js" charset="utf-8" async></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+        <link rel="icon" href="src/logo.svg" type="image/svg+xml">
+        <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script> -->
     </head>
     <body>
-        <div class="nav">
-            <a href="interpretation.html" style="padding-right: 60px"><b>CCIA CompBio Lab</b></a>
-            <a href="Home">Home</a>
-            <a href="Members">Members</a>
-            <div class="dropdown">
-                <a class="dropbtn">Tools</a>
-                <div class="dropdown-content">
-                    <a href="CRUX">CRUX</a>
-                    <a href="disTIL">disTIL</a>
-                    <a href="Graphene">Graphene</a>
-                    <a href="Helium">Helium</a>
-                    <a href="Primadyne">Primadyne</a>
-                    <a href="SpliceInterpreter">SpliceInterpreter</a>
-                    <a href="SpliceVarDB">SpliceVarDB</a>
-                    <a href="Zerodash">Zerodash</a>
+        <div id="Terms" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">SpliceVarDB Terms of Use</div>
+            <div class="content">
+                <h3 class="ui header" style="font-weight: 300; text-align: justify;">We allow browsing of the data in SpliceVarDB by any commercial or non-commercial user, and the downloading of fewer than 100 variants for free, anonymously. We request information from the user to download more than 100 variants and make this data available under a CC BY-NC license.</h3>
+		<h3 class="ui header" style="font-weight: 300;">The terms of a CC BY-NC license are as follows:</h3>
+		<div class="terms">
+		    <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+		    <p style="text-align: justify;"><b>Attribution</b> - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+		</div>
+		<div class="terms">
+		    <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+		    <p style="text-align: justify;"><b>NonCommercial</b> - Under this license, you may not use the material for commercial purposes. We can arrange an alternative license for commercial purposes, please contact A/Prof. Mark Cowley (<a href="mailto:mcowley@ccia.org.au">mcowley@ccia.org.au</a>).</p>
+		</div>
+	    </div>
+	    <div class="center aligned actions">
+   	    <form class="ui form segment" onsubmit="termsSubmit();return false">
+		<p>Data Download Terms and Conditions</p>
+    		<div class="ui error message"></div>
+		<div class="field">
+      		    <label>Name</label>
+      		    <input placeholder="Name" name="name" type="text">
+    		</div>
+		<div class="field">
+                    <label>Affiliation</label>
+                    <input placeholder="Affiliation" name="affiliation" type="text">
                 </div>
+		<div class="inline field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" name="noncommercial">
+                        <label>I do not work at a commercial organisation</label>
+                    </div>
+                </div>
+		<div class="field">
+                    <label>Role</label>
+                    <input placeholder="Role" name="role" type="text">
+                </div>
+  		<div class="field">
+    		    <label>Purpose for Download</label>
+    		    <select name="purpose" multiple="" class="ui dropdown">
+      			<option value="">Select Purpose</option>
+      			<option value="curation">Variant Curation</option>
+			<option value="gene">Gene(s) of Interest</option>
+			<option value="therapeutics">Therapeutic Targets</option>
+			<option value="benchmarking"><i>In silico</i> Benchmarking</option>
+      			<option value="development"><i>In silico</i> Development</option>
+			<option value="other">Other</option>
+    		    </select>
+		</div>
+		<div class="inline field">
+    		    <div class="ui checkbox">
+      			<input type="checkbox" name="terms">
+      			<label>I agree to the terms and conditions</label>
+    		    </div>
+  		</div>
+                
+		<div class="ui negative button">Cancel</div>
+                <div class="ui cci_green submit button">OK</div>
+	    </form>
+	    </div>
+        </div>    
+	
+	<div class="overflowing pusher">
+	<div id="TOU_pull">
+	    <button class="circular ui icon button" data-tooltip="View Terms of Use" data-position="right center">
+  		<i class="large icon balance scale"></i>
+	    </button>
+	</div>
+	<div class="ui borderless main menu sticky">
+            <div class="ui nav container">
+            	<div class="header"><a href="https://compbio.ccia.org.au" class="item">
+           	    <img class="logo" src="src/logo.png">
+            	    <b>CompBio</b></a>
+            	</div>
+            	<a href="https://compbio.ccia.org.au/members" class="item">People</a>
+           	<!-- <a href="#" class="item">Research Areas</a>
+            	<a href="#" class="item">Publications</a> -->
+            	<a href="https://compbio.ccia.org.au/news" class="item">News</a>
+            	<a href="https://compbio.ccia.org.au/contact" class="item">Contact Us</a>
+            	<div class="ui right floated dropdown item">
+            	    Tools <i class="dropdown icon"></i>
+            	    <div class="menu">
+                	<a href="https://github.com/CCICB" target="_blank" class="item">GitHub</a>
+                	<div class="divider"></div>
+                	<div class="header">Online Tools</div>
+                	<a href="https://ccicb.shinyapps.io/crux/" target="_blank" class="item">CRUX</a>
+                	<a href="https://compbio.ccia.org.au/splicevardb" class="item">SpliceVarDB</a>
+               	    </div>
+            	</div>
             </div>
-            <a href="Publications">Publications</a>
-            <a href="Jobs">Available Positions</a>
-        </div>
-
-        <div class="content">
-            <div class="block">
-                <h1 class="title">SpliceVarDB</h1>
+    	</div>
+	
+        <div class="ui container content">
+            <div style="position: relative">
+                <h1 class="ui header" style="margin: 0 !important">SpliceVarDB</h1>
+		<div id="buildToggle_buttons" class="ui buttons" style="display: none; position: absolute; right: 0; top: 0;" >
+  		    <button id="hg38_toggle" onclick="buildToggle('hg38')" class="ui button">hg38</button>
+  		    <div class="or"></div>
+  		    <button id="hg19_toggle" onclick="buildToggle('hg19')" class="ui button">hg19</button>
+		</div>
             </div>
-
-            <div id="gene_plot" class="box">
-                <span id="lollipop_placeholder">– Lollipop gene plot will display when only one gene is returned –</span>
-                <progress id="lollipop_loader" class="progress is-ccigreen is-small" max="100">30%</progress>
+            <div id="gene_plot" class="ui raised segment" style="padding: 0 !important; min-height: 100px;">
+                <span id="lollipop_placeholder" style="margin: 40px 0">– Lollipop gene plot will display when only one gene is returned –</span>
                 <div id="lollipop">
                 </div>
             </div>
 
-            <div class="block box variants" id="results">
-                <div class="is-horizontal">
-                    <h4 class="title is-4" id="results_sentence">Variants</h4>
-                </div>
-                <table class="table is-hoverable">
+            <div class="ui container raised segment variants" id="results">
+                <table class="ui table hover">
                     <thead>
                         <tr id="table-head">
                             <th>+</th>
-                            <th>Variant</th>
+                            <th>Variant (hg38)</th>
+			    <th>Variant (hg19)</th>
                             <th>Gene</th>
                             <th>HGVS</th>
                             <th>Validation</th>
                             <th>Classification</th>
+			    <th>Location</th>
                         </tr>
                     </thead>
                     <tbody id="displayVariants">
@@ -78,6 +157,7 @@
                 <div class="error"></div>
             </div>
         </div>
-    </body>
-    <script src="../static/js/home.js" defer></script>
+    </div>
+</body>
+<script src="splicevardb/static/js/home.js" defer></script>
 </html>
