@@ -14,6 +14,7 @@ let genome_build = "hg38";
 const date = new Date();
 const date_tag = date.getUTCFullYear() + (1 + date.getUTCMonth()).toString().padStart(2,'0') + date.getUTCDate().toString().padStart(2,'0');
 
+var comma_genes = [];
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -96,8 +97,10 @@ function buildToggle(version) {
             hg19_column.visible(true);
 	}
     }
-    document.getElementById('lollipop').style.display = "none";
-    populateProteinPaint();
+    if ($('#lollipop').is(':visible')) {
+	document.getElementById('lollipop').style.display = "none";
+	populateProteinPaint();
+    }
 }
 
 function displayLoader() {
@@ -110,9 +113,6 @@ function displayLoader() {
 	    $('#buildToggle_buttons').show();
 	    buildToggle("hg38");
 	    makeFilter();
-	    //$('.dtsb-titleRow').remove();
-	    //$('.dtsb-add').removeClass('dtsb-button');
-	    //$('.dtsb-search').addClass('ui basic button');
 	    $('#results').dimmer('hide');
             $('#results .dimmer').empty();
 	    clearInterval(displayLoaderCheck);
@@ -121,11 +121,168 @@ function displayLoader() {
     },500);
 }
 
-$('#TOU_pull button').on("click", function() {
+$('#TOU_pull').on("click", function() {
     $('#Terms')
 	.flyout('show')
     ;
+    $('.ui.dropdown').dropdown();
 });
+
+$('#Submit_pull').on("click", function() {
+    $('#Submit')
+        .flyout('show')
+    ;
+    $('.ui.dropdown').dropdown();
+    $('.ui.radio.checkbox')
+      	.checkbox()
+    ;
+    submitOptions("published", "form");
+});
+
+function submitOptions(source, format) {
+    var $form = $('#Submit form')
+    var values = $form.form('get values')
+    $('#Submit .ui.error.message').empty();
+    console.log(values)
+    if (source) { 
+	$("#submit_source button").removeClass("cci_green")
+	$("input[name='published']").val('')
+	$("input[name='preprint']").val('')
+	$("input[name='unpublished']").val('')
+    	if (source == "published") {
+            $("#published").addClass("cci_green")
+	    $(".field.unpublished").hide()
+            $(".field.preprint").hide()
+	    $(".field.publication").show()
+	    $("input[name='published']").val(true)
+    	} else if (source == "preprint") {
+	    $("#preprint").addClass("cci_green")
+	    $(".field.unpublished").hide()
+            $(".field.publication").hide()
+            $(".field.preprint").show()
+	    $("input[name='published']").val(true)
+	    $("input[name='preprint']").val(true)
+    	} else if (source == "unpublished") {
+	    $("#unpublished").addClass("cci_green")
+	    $(".field.preprint").hide()
+            $(".field.publication").hide()
+            $(".field.unpublished").show()
+	    $("input[name='unpublished']").val(true)
+    	}
+    }
+
+    if (format) {
+    	$("#submit_format button").removeClass("cci_green")
+	$("input[name='form']").val('')
+	$("input[name='template']").val('')
+    	if (format == "form") {
+            $("#form_submit").addClass("cci_green")
+	    $(".field.template, .fields.template").hide()
+            $(".field.form, .fields.form").show()
+	    $("input[name='form']").val(true)
+    	} else if (format == "template") {
+            $("#template_submit").addClass("cci_green")
+	    $(".field.template, .fields.template").show()
+	    $(".field.form, .fields.form").hide()
+	    $("input[name='template']").val(true)
+    	}
+    }
+}
+
+$('#Submit form')
+  .form({
+    fields: {
+      name: {
+        identifier: 'name',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter your name'
+          }
+        ]
+      },
+      email: {
+        identifier: 'email',
+        rules: [
+          {
+            type   : 'email',
+            prompt : 'Please enter a valid email'
+          }
+        ]
+      },
+      involved: {
+        identifier: 'involved',
+	depends: 'unpublished',
+        rules: [
+          {
+            type   : 'checked',
+            prompt : 'We require that the submitter of unpublished validation data be involved in the generation of the results.'
+          }
+        ]
+      },
+      doi: {
+        identifier: 'DOI',
+	depends: 'published',
+        rules: [
+	  {
+            type   : 'regExp[10.[0-9]{4,9}/[-._;()/:a-z0-9A-Z]+]',
+            prompt : 'Please provide a valid DOI.'
+          }
+        ]
+      },
+      variant: {
+        identifier: 'variant',
+        depends: 'form',
+        rules: [
+          {
+            type   : 'regExp[([0-9]{1,2}|X|Y)-([0-9]+)-(A|C|G|T)+-(A|C|G|T)+]',
+            prompt : 'Please provide a valid variant.'
+          }
+        ]
+      },
+      method: {
+        identifier: 'method',
+	depends: 'form',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a validation method'
+          }
+        ]
+      },
+      metric_name: {
+        identifier: 'metric_name',
+	depends: 'form',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
+          }
+        ]
+      },
+      metric_value: {
+        identifier: 'metric_value',
+        depends: 'metric_name',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
+          }
+        ]
+      },
+      template: {
+        identifier: 'templateFile',
+        depends: 'template',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please supply the template file.'
+          }
+        ]
+      }
+    }
+  })
+;
 
 function termsSubmit() {
     if ($('#Terms form').form('is valid')) {
@@ -226,7 +383,7 @@ function variantCount() {
 function fetchVariants(column) {
     var table = $('#results table').DataTable();
     if (column) {
-	var variants = table.column(3).data();
+	var variants = table.column(column).data();
     } else {
 	var variants = table.data();
     }
@@ -236,32 +393,46 @@ function fetchVariants(column) {
 
 function tableCount() {
     var table = $('#results table').DataTable();
-    var filtered = table.rows({search:'applied'})
-    return filtered.data().length;
+    var filtered = table.rows( {search:'applied'} ).data();
+    return filtered.length;
 }
 
 function fetchTableVariants(column) {
     var table = $('#results table').DataTable();
-    var data = table.rows({search:'applied'}).data().toArray();
-    return data;
+    var filtered = table.rows( {search:'applied'} ).data().toArray();
+
+    if (column) {
+        var variants = []
+	filtered.forEach(function(variant) {
+	    variants.push(variant[column]);
+	});
+	return variants
+    } else {
+        return filtered
+    }
 }
 
 function populateProteinPaint(initial_data) {
-    data = fetchTableVariants();
-
-    let displayed_genes = []
-    data.forEach(function (item, index) {
-        displayed_genes.push(item.gene_symbol_list);
-    });
-
+    table_data = fetchTableVariants();
     // Runs ProteinPaint if only one gene is left from filtering
-    let uniqueGenes = [...new Set(displayed_genes)];
-    if (uniqueGenes.length == 1) {
+    let uniqueGenes = uniqueValues("gene_symbol_list", "filtered");
+    
+    if (uniqueGenes[0].length == 1) {
         if ( ($('#lollipop').filter(':hidden')) & ($('#gene_plot .dimmer').filter(':hidden')) ) {
-            generateProteinPaint(data, uniqueGenes[0]);
+            generateProteinPaint(table_data, uniqueGenes[0][0]);
         } else {
-            if ( JSON.stringify(data) !== JSON.stringify(initial_data) ) {
-                generateProteinPaint(data, uniqueGenes[0]);
+            if ( JSON.stringify(table_data) !== JSON.stringify(initial_data) ) {
+                generateProteinPaint(table_data, uniqueGenes[0][0]);
+            }
+        }
+    } else if (uniqueGenes[1] && $("#geneFilter").val()) {
+	if ( $("#geneFilter").val().length == 1 ) {
+	    if ( ($('#lollipop').filter(':hidden')) & ($('#gene_plot .dimmer').filter(':hidden')) ) {
+	        generateProteinPaint(table_data, $("#geneFilter").val()[0]);
+	    } else {
+                if ( JSON.stringify(table_data) !== JSON.stringify(initial_data) ) {
+                    generateProteinPaint(table_data, $("#geneFilter").val()[0]);
+                }
             }
         }
     } else {
@@ -271,7 +442,7 @@ function populateProteinPaint(initial_data) {
         document.getElementById('lollipop_placeholder').style.display = "block";
     }
     // Recall function every 2 seconds with previous data as a comparison
-    setTimeout(function() { populateProteinPaint(data) }, 2000);
+    setTimeout(function() { populateProteinPaint(table_data) }, 2000);
 }
 
 function proteinPaintLoad() {
@@ -310,8 +481,7 @@ makeRequest = async (path, method, body) => {
     });
 };
 
-// addTerms = async (input_name, input_affil, input_role, input_purpose, input_noncommercial, input_terms, variants) =>
-    
+// Add to Database
 addTerms = async (values) =>
     makeRequest(`${termsAPI}`,
 	"POST",
@@ -323,11 +493,7 @@ addTerms = async (values) =>
 	'noncommercial': 1,
 	'terms': 1,
 	'variants_downloaded': tableCount()
-     }
-    );
-
-//addTerms = async (values) =>
-//    makeRequest(`${termsAPI}`, "POST", values);
+     });
 
 getMyVariant = async (variant) =>
     makeRequest(`${myVariant}${variant}`, "GET", null);
@@ -362,39 +528,172 @@ function call_api() {
 }
 
 // Add Search Builder
-function makeFilter() {
+async function makeFilter() {
     $('#DataTables_Table_0_wrapper').prepend('<div id="filters"><button id="filterToggle" class="ui basic button">Launch Custom Filter</button></div>');
     $('#filterToggle').on('click', function() {
-	var gene_list = geneList().sort();
-	var gene_filter = '<div class="filter">' +
-                    '<label>Gene List:</label><select class="ui multiple five column search clearable selection dropdown">' +
-                    '<option value="">Gene</option>'
+	var uniqueGenes = uniqueValues(3);
+	var gene_list = uniqueGenes[0];
+	comma_genes = uniqueGenes[1];
+	var gene_filter = '<div class="filter italic">' +
+            '<label>Gene List:</label><select id="geneFilter" class="ui multiple five column search clearable selection dropdown">' +
+            '<option value="">Gene</option>'
 
 	gene_list.forEach(function (gene, index) {
 	    gene_filter = gene_filter + 
 		'<option value="' + gene + '">' + gene + '</option>'
 	});
 	$('#filters').html(gene_filter + '</select></div>');
+	
+	var validation_list = uniqueValues(5)[0]; 
+	var validation_filter = '<div class="filter">' +
+            '<label>Validation Method:</label><select id="valFilter" class="ui multiple search clearable selection dropdown">' +
+	    '<option value="">Method</option>'
+	
+	validation_list.forEach(function (validation, index) {
+            validation_filter = validation_filter +
+                '<option value="' + validation + '">' + validation + '</option>'
+        });
+        $('#filters').append(validation_filter + '</select></div>');
+
+	var class_list = uniqueValues(6)[0];
+        var classification_filter = '<div class="filter">' +
+            '<label>Classification:</label><select id="classFilter" class="ui multiple search clearable selection dropdown">' +
+            '<option value="">Classification</option>'
+
+        class_list.forEach(function (classification, index) {
+            classification_filter = classification_filter +
+                '<option value="' + classification + '">' + classification + '</option>'
+        });
+        $('#filters').append(classification_filter + '</select></div>');
+
+	$('#filters').append('<div class="float right"><button id="removeFilter" class="ui basic button">Reset</button><button id="runFilter" class="ui cci_green button">Filter Results</button></div>');
+	$('#runFilter').on('mousedown', function() {
+    	    $('#filters button').addClass('loading');
+	});
+	$('#runFilter').on('mouseup', function() {
+	    $('#filters button').removeClass('loading');
+	    selected_genes=$('#geneFilter').val();
+    	    selected_val=$('#valFilter').val();
+    	    selected_class=$('#classFilter').val();
+    	    useFilter(selected_genes, selected_val, selected_class);
+	})
+
+	$('#removeFilter').on('mousedown', function() {
+            $('#filters button').addClass('loading');
+	    $('.remove').click();
+        });
+        $('#removeFilter').on('mouseup', function() {
+            $('#filters button').removeClass('loading');
+            var table = $('#DataTables_Table_0').DataTable();
+	    table.searchBuilder.rebuild();
+	    $('#gene_plot').dimmer('hide');
+            $('#gene_plot .dimmer').empty();
+            document.getElementById('lollipop').style.display = "none";
+            document.getElementById('lollipop_placeholder').style.display = "block";
+        })
+
 	$('.ui.dropdown').dropdown();
     });
-}
+};
 
-// Get Genes
-function geneList(data) {
-    data = fetchVariants(3);
-    console.log(data);
+// Run filters
+function useFilter(genes,validations,classifications) {
+    var table = $('#DataTables_Table_0').DataTable();
     
-    let gene_list = [];
-    data.forEach(function(gene_entry) {
-	gene_entry.split(",").forEach(function(gene) {
-	    gene_list.push(gene);
-	});
-    });
-    // Runs ProteinPaint if only one gene is left from filtering
-    let uniqueGenes = [...new Set(gene_list.sort())];
+    var comma_search = {
+	condition: 'contains',
+        data: 'Gene',
+        origData: 'gene_symbol_list',
+        type: 'html',
+        value: [',']
+    }
+    
+    var comma_genes_present = genes.filter(value => comma_genes.includes(value));
+    var comma_genes_search = []
 
-    return uniqueGenes;
+    comma_genes_present.forEach(function(gene) {
+        comma_genes_search.push( {
+            condition: 'contains',
+            data: 'Gene',
+            origData: 'gene_symbol_list',
+            type: 'html',
+            value: [gene]
+        })
+    });
+
+    var gene_search = []
+    genes.forEach(function(gene) {
+	gene_search.push({
+            condition: '=',
+            data: 'Gene',
+            origData: 'gene_symbol_list',
+            type: 'html',
+            value: [gene]
+    	})
+    });
+    
+    var val_search = []
+    validations.forEach(function(validation) {
+	val_search.push({
+	    condition: 'contains',
+            data: 'Validation',
+            origData: 'validation_report',
+            type: 'html',
+            value: [validation]
+        })
+    });
+
+    var class_search = []
+    classifications.forEach(function(classification) {
+	class_search.push({
+            condition: '=',
+            data: 'Classification',
+            origData: 'classification',
+            type: 'html',
+            value: [classification]
+	})
+    });
+
+    var genes_json = JSON.parse(JSON.stringify({"criteria": gene_search, "logic": "OR"}))
+    var comma_genes_json = JSON.parse(JSON.stringify({"criteria": comma_genes_search, "logic": "OR"}))	
+    var commas_json = JSON.parse(JSON.stringify({"criteria": [comma_search, comma_genes_json], "logic": "AND"}))
+    var genes_full_json = JSON.parse(JSON.stringify({"criteria": [genes_json, commas_json], "logic": "OR"}))
+
+    var val_json = JSON.parse(JSON.stringify({"criteria": val_search, "logic": "OR"}))
+    var class_json = JSON.parse(JSON.stringify({"criteria": class_search, "logic": "OR"}))
+
+    var criteria_list = [(comma_genes_present.length ? genes_full_json : genes_json), val_json, class_json]
+    var filter_search = JSON.parse(JSON.stringify({"criteria": criteria_list, "logic": "AND"}))
+
+    console.log(filter_search);
+    table.searchBuilder.rebuild(filter_search);
 }
+
+// Get unique values from table
+function uniqueValues(column, data_type) {
+    if (data_type == "filtered") {
+	data = fetchTableVariants(column);
+    } else {
+	data = fetchVariants(column);
+    }
+
+    let list = [];
+    let commas = []
+    data.forEach(function(entry) {
+	if (entry.includes(",")) {
+	    entry.split(",").forEach(function(split) {
+		list.push(split);
+		commas.push(split)
+    	    });
+	} else {
+	    list.push(entry);
+	}
+    });
+    let uniqueList = [...new Set(list.sort())];
+    let uniqueCommasList = [...new Set(commas.sort())];
+    return [uniqueList.sort(), uniqueCommasList.sort()];
+}
+
 
 // Adds passed data into the display table
 function appendData(variants) {
@@ -403,7 +702,7 @@ function appendData(variants) {
 
     var table = $('.variants table').DataTable({
         data: variants,
-	dom: 'frtipB',
+	dom: 'QfrtipB',
 	buttons: [
             {
             	filename: 'splicevardb.' + date_tag,
@@ -614,7 +913,7 @@ function formatIGV(row) {
     }
 
     var igvDiv = row.child().find(".variant-visualisation")[0];
-    igvDiv.style.minHeight = "360px";
+    igvDiv.style.minHeight = "300px";
     if ( row.data().classification == "Splice-altering" ) {
         var color = "rgba(219, 61, 61,0.5)";
     } else if ( row.data().classification == "Low-frequency" ) {
@@ -717,6 +1016,7 @@ function convert_to_protein_paint(snv) {
         } else if (genome_build == "hg38") {
             var variant_pos = variant.pos_hg38;
         }
+	
         // Extract the first letter of the classification to use for the class
         let classifier = variant.classification.charAt(0).replace("C", "X");
         plot_item = {

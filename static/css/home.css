@@ -1,20 +1,5 @@
 /* Terms of Use Styling */
 
-#TOU_pull {
-    position: fixed;
-    bottom: 0;
-    padding: 20px;
-    z-index: 10;
-}
-
-#TOU_pull button {
-    padding: 20px;
-}
-
-#TOU_pull button i {
-    display: contents;
-}
-
 .terms {
     display: inline-flex;
     margin-bottom: 1em;
@@ -22,6 +7,20 @@
 
 .terms img {
     margin-right: 1em;
+}
+
+.terms i {
+    width: 50px;
+    height: 100%;
+}
+
+.actions .ui.form .inline.field>input {
+    width: calc(100% - 100px) !important;
+}
+
+.actions .ui.form .inline.field>label {
+    width: 80px !important;
+    text-align: right;
 }
 
 .vertical-center {
@@ -33,6 +32,10 @@
     display: block;
     text-align: center;
     margin: 10px auto;
+}
+
+.buttons.field button {
+    margin-bottom: 1em !important;
 }
 
 /* ProteinPaint edits */
@@ -89,6 +92,106 @@ td .columns p {
     background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.column p, .column h5, .column ul {
+    margin: 0;
+}
+
+.column li {
+    line-height: 1em;
+}
+
+.igv-container {
+    background-color: white;
+    padding-top: 0 !important;
+    border-radius: 10px;
+}
+
+.igv-navbar {
+    margin-top: 0 !important;
+}
+
+.igv-gear-menu-column > div {
+    background-color: rgba(0,0,0,0) !important;
+}
+
+/* Table Header Styling */
+.dataTables_filter {
+    margin-bottom: 1em;
+    float: right;
+    display: inline-block;
+}
+
+#filters {
+    display: inline-block;
+    min-width: calc(100% - 280px);
+}
+
+.filter label {
+    display: inline-block;
+    width: 120px;
+    margin: 0 10px 1em 0;
+}
+
+.filter .selection.dropdown {
+    min-width: calc(100% - 130px) !important;
+}
+
+.filter.italic .dropdown a, .filter.italic .dropdown .item {
+    font-style: italic;
+}
+
+.float.right {
+    float: right;
+}
+
+#removeFilter, #runFilter {
+    margin: 0 0 1em 1em;
+}
+
+.dtsb-search {
+    margin: 0 !important;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.dtsb-searchBuilder {
+    display: none !important
+}
+
+/* Table Styling */
+
+#DataTables_Table_0 {
+    width: 100% !important;
+}
+
+/* Table Footer Styling */
+
+.dataTables_paginate {
+    display: inline-flex;
+    float: right;
+    margin-top: 1em;
+}
+
+.dataTables_info {
+    display: inline-flex;
+    padding: 0;
+    margin-top: 1em;
+}
+
+.dt-buttons {
+    display: block !important;
+    clear: both;
+}
+
+.dt-buttons button {
+    margin-right: 0.5em !important;
+}
+
+.ui.grid .row {
+    padding-bottom: 0 !important;
 }
 
 .column p, .column h5, .column ul {
