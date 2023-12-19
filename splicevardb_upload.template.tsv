@@ -1,0 +1,9 @@
+## Upload to https://compbio.ccia.org.au/splicevardb/ or email to psullivan@ccia.org.au															
+## Thank you for submitting variants to SpliceVarDB															
+"## Fields are optional, but if we cannot determine the variant's coordinates, we cannot include the variant"															
+## Please submit one entry per validation type (including replicates)															
+#CHROM	POS	REF	ALT	Genome_build	HGVS	Validation_method	Tissue	DOI	Splice-altering	Outcome	Junction	Metric1_name	Metric1_value	Metric2_name	Metric2_value
+1	100110484	C	A	hg38	NM_194292.3:c.670-1G>T	RNA-Seq	Tumour	10.1101/gr.231951.117	Yes	Alternative 3'SS	chr1:100576034-100584573	reads	4	bayes_factor	13.5498
+1	94467548	C	G	hg19	NM_000350.3:c.6148G>C	Minigene Assay	HEK293	10.1038/s41598-021-03925-1	No	.	.	.	.	.	.
+10	17168850	A	G	hg19	.	MFASS_v1	HEK293T	10.1016/j.molcel.2018.10.037	.	.	.	delta_inclusion_index	-0.592845	wt_inclusion_index	0.754023
+10	17168850	A	G	hg19	.	MFASS_v2	HEK293T	10.1016/j.molcel.2018.10.037	.	.	.	delta_inclusion_index	0.0112587	wt_inclusion_index	0.592845
