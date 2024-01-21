@@ -1,5 +1,6 @@
-const apiURL = 'https://compbio.ccia.org.au/splicevardb-api/variants'
-// const apiURL = 'https://10.10.70.18/splicevardb-api/variants/'
+// const apiURL = 'https://compbio.ccia.org.au/splicevardb-api/variants'
+const apiURL = 'http://127.0.0.1:5000/splicevardb-api/variants'
+const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
 const validationURL = 'https://compbio.ccia.org.au/splicevardb-api/validation/'
 const myVariant = 'https://myvariant.info/v1/variant/'
 const clinvar = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&retmode=json&id="
@@ -23,6 +24,47 @@ function sleep(ms) {
 // Hide gene-level view on initial load
 $( document ).ready(function() {
     call_api();
+
+    if (localStorage.getItem('splicevardb_token')) {
+        $('#Login_pull').text('Token');
+        const token = localStorage.getItem('splicevardb_token');
+        const expiryDate = new Date(parseJwt(token).exp * 1000);
+        if (Date.now() >= parseJwt(token).exp * 1000) {
+            $('#Signin #welcome_message #welcome_token_refresh').addClass('cci_green');
+        }
+            
+        $('#Signin #login_form').hide();
+        $('#TOU_pull').hide();
+        $('#Login_pull').text('Token');
+        $('#Signin #welcome_message').show();
+        $('#Signin #welcome_message #welcome_token_expiry').text(`Your token is valid until ${expiryDate.toDateString()}`);
+        $('#Signin #welcome_message #welcome_name').text(`Welcome ${parseJwt(token).sub.name}`);
+        $('#Signin #welcome_message #welcome_token').val(localStorage.getItem('splicevardb_token'));
+    }
+    $('#request_button').hide();
+    $('#secret_tunnel').hide();
+    $('#field_select').change(() => {
+        const selected = $('#field_select').val();
+        if (selected === 'commercial') {
+            $('#commercial_purpose').show();
+            $('#purpose').hide();
+
+            $('#register_button').hide();
+            $('#request_button').show();
+        } else {
+            $('#commercial_purpose').hide();
+            $('#purpose').show();
+
+            $('#register_button').show();
+            $('#request_button').hide();
+        }
+
+        if (selected === 'academic') {
+            $('#spliceai_checkbox').prop( "checked", true );
+        } else {
+            $('#spliceai_checkbox').prop( "checked", false );
+        }
+    });
 
     // HEADER CONFIGURATION
     // fix main menu to page on passing
@@ -52,27 +94,31 @@ $( document ).ready(function() {
 
     // If column visibilty changes then draw the table to update the filters.
     $('#results table').on( 'column-visibility.dt', function ( e, settings, column, state ) {
-	$('#results table').DataTable().draw(false);
+	    $('#results table').DataTable().draw(false);
     } );
 
     $('#results table').on( 'search.dt', function () {
-	downloadButton();
-	variants=tableCount()
-	if (variants < variantCount() && variants != 0) {
-	    $("#download_filtered").show();
-	} else {
-	    $("#download_filtered").hide();
-    	}
+        downloadButton();
+        variants=tableCount()
     });
 });
 
+function logout() {
+    localStorage.removeItem('splicevardb_token');
+    downloadButton();
+    $('#TOU_pull').show();
+    $('#Login_pull').text('Sign in');
+    $('#Signin #login_form').show();
+    $('#Signin #welcome_message').hide();
+}
+
 function downloadButton() {
-    if (TOU) {
+    if (localStorage.getItem('splicevardb_token')) {
     	$(".dt-buttons button").addClass("cci_green");
     } else if (tableCount() < 100) {
-        $("#download_filtered").addClass("cci_green");
+        $(".dt-buttons button").addClass("cci_green");
     } else {
-	$(".dt-buttons button").removeClass("cci_green");
+	    $(".dt-buttons button").removeClass("cci_green");
     }
 }
 
@@ -98,8 +144,8 @@ function buildToggle(version) {
 	}
     }
     if ($('#lollipop').is(':visible')) {
-	document.getElementById('lollipop').style.display = "none";
-	populateProteinPaint();
+        document.getElementById('lollipop').style.display = "none";
+        populateProteinPaint();
     }
 }
 
@@ -109,22 +155,32 @@ function displayLoader() {
     $('#results .dimmer').append('<div class="ui text loader">Loading Variants</div>');
 
     var displayLoaderCheck = window.setInterval(function(){
-	if ( $('#DataTables_Table_0').is(":visible") ) {
-	    $('#buildToggle_buttons').show();
-	    buildToggle("hg38");
-	    makeFilter();
-	    $('#results').dimmer('hide');
+        if ( $('#DataTables_Table_0').is(":visible") ) {
+            $('#buildToggle_buttons').show();
+            buildToggle("hg38");
+            makeFilter();
+            $('#results').dimmer('hide');
             $('#results .dimmer').empty();
-	    clearInterval(displayLoaderCheck);
-	    populateProteinPaint();
-	}
+            clearInterval(displayLoaderCheck);
+            populateProteinPaint();
+        }
     },500);
 }
 
 $('#TOU_pull').on("click", function() {
-    $('#Terms')
-	.flyout('show')
-    ;
+    $('#Terms').flyout('show');
+    $('.ui.dropdown').dropdown();
+});
+
+$('#Login_pull').on("click", function() {
+    $('#Signin').flyout('show');
+    if (localStorage.getItem('splicevardb_token')) {
+        const info = parseJwt(localStorage.getItem('splicevardb_token'));
+        $('#Signin #login_form').hide();
+        $('#Signin #welcome_message').show();
+        $('#Signin #welcome_message #welcome_name').text(`Welcome ${info.sub.name}`);
+        $('#Signin #welcome_message #welcome_token').val(localStorage.getItem('splicevardb_token'));
+    }
     $('.ui.dropdown').dropdown();
 });
 
@@ -143,48 +199,48 @@ function submitOptions(source, format) {
     var $form = $('#Submit form')
     var values = $form.form('get values')
     $('#Submit .ui.error.message').empty();
-    console.log(values)
+    // console.log(values)
     if (source) { 
-	$("#submit_source button").removeClass("cci_green")
-	$("input[name='published']").val('')
-	$("input[name='preprint']").val('')
-	$("input[name='unpublished']").val('')
+	    $("#submit_source button").removeClass("cci_green")
+        $("input[name='published']").val('')
+        $("input[name='preprint']").val('')
+        $("input[name='unpublished']").val('')
     	if (source == "published") {
             $("#published").addClass("cci_green")
-	    $(".field.unpublished").hide()
+	        $(".field.unpublished").hide()
             $(".field.preprint").hide()
-	    $(".field.publication").show()
-	    $("input[name='published']").val(true)
+	        $(".field.publication").show()
+	        $("input[name='published']").val(true)
     	} else if (source == "preprint") {
-	    $("#preprint").addClass("cci_green")
-	    $(".field.unpublished").hide()
+	        $("#preprint").addClass("cci_green")
+	        $(".field.unpublished").hide()
             $(".field.publication").hide()
             $(".field.preprint").show()
-	    $("input[name='published']").val(true)
-	    $("input[name='preprint']").val(true)
+	        $("input[name='published']").val(true)
+	        $("input[name='preprint']").val(true)
     	} else if (source == "unpublished") {
-	    $("#unpublished").addClass("cci_green")
-	    $(".field.preprint").hide()
+	        $("#unpublished").addClass("cci_green")
+	        $(".field.preprint").hide()
             $(".field.publication").hide()
             $(".field.unpublished").show()
-	    $("input[name='unpublished']").val(true)
+	        $("input[name='unpublished']").val(true)
     	}
     }
 
     if (format) {
     	$("#submit_format button").removeClass("cci_green")
-	$("input[name='form']").val('')
-	$("input[name='template']").val('')
+        $("input[name='form']").val('')
+        $("input[name='template']").val('')
     	if (format == "form") {
             $("#form_submit").addClass("cci_green")
-	    $(".field.template, .fields.template").hide()
+	        $(".field.template, .fields.template").hide()
             $(".field.form, .fields.form").show()
-	    $("input[name='form']").val(true)
+	        $("input[name='form']").val(true)
     	} else if (format == "template") {
             $("#template_submit").addClass("cci_green")
-	    $(".field.template, .fields.template").show()
-	    $(".field.form, .fields.form").hide()
-	    $("input[name='template']").val(true)
+            $(".field.template, .fields.template").show()
+            $(".field.form, .fields.form").hide()
+            $("input[name='template']").val(true)
     	}
     }
 }
@@ -284,18 +340,109 @@ $('#Submit form')
   })
 ;
 
-function termsSubmit() {
-    if ($('#Terms form').form('is valid')) {
-	TOU = true;
-    	downloadButton();
-	$('#Terms')
-            .flyout('hide')
-        ;
-	var $form = $('#Terms form')
-	var values = $form.form('get values')
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 
-	addTerms(values);
-	
+    return JSON.parse(jsonPayload);
+}
+
+async function loginSubmit() {
+    if ($('#Signin form').form('is valid')) {
+	    var $form = $('#Signin form')
+	    var values = $form.form('get values')
+        const result = await login({
+            email: values.email,
+            password: values.password
+        })
+        if (result.token && result.name) {
+            const token = result.token;
+            localStorage.setItem("splicevardb_token", token);
+            downloadButton();
+
+            const expiryDate = new Date(parseJwt(token).exp * 1000);
+            
+            $('#Signin #login_form').hide();
+            $('#TOU_pull').hide();
+            $('#Login_pull').text('Token');
+            $('#Signin #welcome_message').show();
+            
+            if (Date.now() >= parseJwt(token).exp * 1000) {
+                $('#Signin #welcome_message #welcome_token_refresh').addClass('cci_green');
+            }
+            $('#Signin #welcome_message #welcome_token_expiry').text(`Your token is valid until ${expiryDate.toDateString()}`);
+            $('#Signin #welcome_message #welcome_name').text(`Welcome ${parseJwt(token).sub.name}`);
+            $('#Signin #welcome_message #welcome_token').val(localStorage.getItem('splicevardb_token'));
+
+        } else {
+            const err = result.message;
+            alert(err)
+        }
+    }
+}
+
+async function refreshToken() {
+    if (localStorage.getItem("splicevardb_token")) {
+        const email = parseJwt(localStorage.getItem("splicevardb_token")).sub.email;
+        const result = await refresh(email);
+        if (result.token) {
+            localStorage.setItem("splicevardb_token", result.token);
+            $('#Signin #welcome_message #welcome_token').val(result.token);
+            if ($('#Signin #welcome_message #welcome_token_refresh').hasClass('cci_green')) {
+                $('#Signin #welcome_message #welcome_token_refresh').removeClass('cci_green');
+            }
+            
+        }
+    }
+}
+
+async function termsSubmit() {
+    if ($('#Terms form').form('is valid')) {
+	    var $form = $('#Terms form')
+	    var values = $form.form('get values')
+        const result = await register({
+            name: values.name,
+            email: values.email,
+            password: values.password,
+            affiliation: values.affiliation,
+            field: values.field,
+            purpose: values.purpose,
+            spliceai: values.field === 'academic' ? true : values.spliceai === 'on',
+            role: values.role
+        })
+        if (result.token && result.name) {
+            const token = result.token;
+            localStorage.setItem("splicevardb_token", token);
+
+            const expiryDate = new Date(parseJwt(token).exp * 1000);
+
+            $('#Terms').flyout('hide');
+            $('#TOU_pull').hide();
+            downloadButton();
+            $('#Login_pull').text('Token');
+            $('#Signin #welcome_message').show();
+            if (Date.now() >= parseJwt(token).exp * 1000) {
+                $('#Signin #welcome_message #welcome_token_refresh').addClass('cci_green');
+            }
+            $('#Signin #welcome_message #welcome_token_expiry').text(`Your token is valid until ${expiryDate.toDateString()}`);
+            $('#Signin #welcome_message #welcome_name').text(`Welcome ${parseJwt(token).sub.name}`);
+            $('#Signin #welcome_message #welcome_token').val(localStorage.getItem('splicevardb_token'));
+        } else {
+            const err = result.message;
+            alert(err)
+        }
+    }
+}
+
+function emailRequest() {
+    if ($('#Terms form').form('is valid')) {
+	    var $form = $('#Terms form')
+	    var values = $form.form('get values')
+        alert('Your request has been submitted to the data access committee, you will be contacted shortly.')
+        $('#secret_tunnel').trigger('click');
     }
 }
 
@@ -311,21 +458,39 @@ $('#Terms form')
           }
         ]
       },
+      email: {
+        identifier: 'email',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter your email'
+          }
+        ]
+      },
+      password: {
+        identifier: 'password',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please enter a password'
+          }
+        ]
+      },
+      field: {
+        identifier: 'field',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Please select an organisation type'
+          }
+        ]
+      },
       affiliation: {
         identifier: 'affiliation',
         rules: [
           {
             type   : 'empty',
             prompt : 'Please enter an affiliation'
-          }
-        ]
-      },
-      noncommercial: {
-        identifier: 'noncommercial',
-        rules: [
-          {
-            type   : 'checked',
-            prompt : 'You must not work at a commercial organisation. Please read the above Terms of Use and follow the instructions to obtain an alternative license to download variants.'
           }
         ]
       },
@@ -341,6 +506,29 @@ $('#Terms form')
     }
   })
 ;
+$('#Signin form')
+    .form({
+        email: {
+            identifier: 'email',
+            rules: [
+                {
+                    type   : 'empty',
+                    prompt : 'Please enter your email'
+                }
+            ]
+        },
+        password: {
+            identifier: 'password',
+            rules: [
+                {
+                    type   : 'empty',
+                    prompt : 'Please enter a password'
+                }
+            ]
+        },
+    })
+;
+    
 
 $.fn.dataTable.ext.search.push(function(
     settings,
@@ -383,9 +571,9 @@ function variantCount() {
 function fetchVariants(column) {
     var table = $('#results table').DataTable();
     if (column) {
-	var variants = table.column(column).data();
+	    var variants = table.column(column).data();
     } else {
-	var variants = table.data();
+	    var variants = table.data();
     }
 
     return variants.toArray();
@@ -425,20 +613,25 @@ function populateProteinPaint(initial_data) {
                 generateProteinPaint(table_data, uniqueGenes[0][0]);
             }
         }
-    } else if (uniqueGenes[1] && $("#geneFilter").val()) {
-	if ( $("#geneFilter").val().length == 1 ) {
-	    if ( ($('#lollipop').filter(':hidden')) & ($('#gene_plot .dimmer').filter(':hidden')) ) {
-	        generateProteinPaint(table_data, $("#geneFilter").val()[0]);
-	    } else {
+    } else if (uniqueGenes[1].length > 0 && $("#geneFilter").val()) {
+	    if ( $("#geneFilter").val().length == 1 ) {
+            if ( ($('#lollipop').filter(':hidden')) & ($('#gene_plot .dimmer').filter(':hidden')) ) {
+                generateProteinPaint(table_data, $("#geneFilter").val()[0]);
+            } else {
                 if ( JSON.stringify(table_data) !== JSON.stringify(initial_data) ) {
                     generateProteinPaint(table_data, $("#geneFilter").val()[0]);
                 }
             }
+        } else {
+            $('#gene_plot').dimmer('hide');
+            $('#gene_plot .dimmer').empty();
+            document.getElementById('lollipop').style.display = "none";
+            document.getElementById('lollipop_placeholder').style.display = "block";
         }
     } else {
         $('#gene_plot').dimmer('hide');
         $('#gene_plot .dimmer').empty();
-	document.getElementById('lollipop').style.display = "none";
+	    document.getElementById('lollipop').style.display = "none";
         document.getElementById('lollipop_placeholder').style.display = "block";
     }
     // Recall function every 2 seconds with previous data as a comparison
@@ -451,27 +644,30 @@ function proteinPaintLoad() {
     $('#gene_plot .dimmer').append('<div class="ui text loader">Loading Visualisation</div>');
 
     var ppLoadCheck = window.setInterval(function(){
-	if ( $('.sja_skg').length) {
+        if ($('.sja_skg').length) {
             $('#gene_plot').dimmer('hide');
-	    $('#gene_plot .dimmer').empty();
-	    $('.sja_Block_div').css({"margin":"0","width":"100%"});
-	    $('.sja_Block_div').children().eq(1).css("width","100%");
-	    $('.sja_Block_div').children().eq(1).children().eq(0).children().eq(0).attr('transform', 'translate(40,0)');	
-	    document.getElementsByClassName('sja_Block_div').item(0).children.item(3).style.display = "none";
+            $('#gene_plot .dimmer').empty();
+            $('.sja_Block_div').css({"margin":"0","width":"100%"});
+            $('.sja_Block_div').children().eq(1).css("width","100%");
+            $('.sja_Block_div').children().eq(1).children().eq(0).children().eq(0).attr('transform', 'translate(40,0)');	
+            document.getElementsByClassName('sja_Block_div').item(0).children.item(3).style.display = "none";
             $('#lollipop').show();
-	    clearInterval(ppLoadCheck);
+            clearInterval(ppLoadCheck);
         } else if ($('#gene_plot .dimmer').is(':empty')) {
-	    clearInterval(ppLoadCheck);	
-	}
+            clearInterval(ppLoadCheck);	
+        }
     },500);
 }
 
-// API call from Alan
 makeRequest = async (path, method, body) => {
+    const token = localStorage.getItem("splicevardb_token");
     return fetch(path, {
         method: method || "GET",
-	...(body ? { headers: { "Content-Type": "application/json" }, } : ""), 
-	...(body ? { body: JSON.stringify(body) } : "" )
+        headers: {
+            "Content-Type": "application/json",
+            ... (token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        ...(body ? { body: JSON.stringify(body) } : "" ),
     }).then((res) => {
         if (res.status === 401) {
             return false
@@ -481,81 +677,85 @@ makeRequest = async (path, method, body) => {
     });
 };
 
-// Add to Database
-addTerms = async (values) =>
-    makeRequest(`${termsAPI}`,
-	"POST",
-	{ 
-        'name': values.name, 
-        'affiliation': values.affiliation, 
-        'role': values.role,
-        'purpose': values.purpose.toString(),
-	'noncommercial': 1,
-	'terms': 1,
-	'variants_downloaded': tableCount()
-     });
+register = async (values) => 
+    makeRequest(`${splicevardbAPI}/user/register`, 'POST', values);
 
-getMyVariant = async (variant) =>
-    makeRequest(`${myVariant}${variant}`, "GET", null);
+login = async (values) =>
+    makeRequest(`${splicevardbAPI}/user/login`, 'POST', values);
+
+refresh = async (email) =>
+    makeRequest(`${splicevardbAPI}/user/refresh_token?email=${email}`, 'GET', null)
+
+getMyVariant = async (variant_id) =>
+    makeRequest(`${splicevardbAPI}/variants/${variant_id}/myvariant`, "GET", null);
 
 getClinvar = async (variant) =>
     makeRequest(`${clinvar}${variant}`, "GET", null);
 
 getValidation = async (variant_id) =>
-    makeRequest(`${validationURL}${variant_id}`, "GET", null);
+    makeRequest(`${splicevardbAPI}/variants/${variant_id}`, "GET", null);
 
 getMyGene = async (gene) =>
     makeRequest(`${myGene}${gene}`, "GET", null);
 
-getSpliceAI = async (variant) =>
-    makeRequest(`${spliceAILookup}` + "?hg=37&distance=1000&variant=" + `${variant}`, "GET", null);
+getSpliceAI = async (variant_id) =>
+    makeRequest(`${splicevardbAPI}/variants/${variant_id}/spliceai`, "GET", null);
 
 getPangolin = async (variant) =>
     makeRequest(`${pangolinLookup}` + "?hg=37&distance=1000&variant=" + `${variant}`, "GET", null);
 
+getAllGenes = async () =>
+    makeRequest(`${splicevardbAPI}/genes/`, "GET", null);
+
+filterVariants = async (payload) =>
+    makeRequest(`${splicevardbAPI}/variants/filter`, 'POST', payload)
+
+downloadVariants = async (payload, token) =>
+    makeRequest(`${splicevardbAPI}/variants/download`, 'POST', payload)
+
 // Basic API call
 function call_api() {
-    fetch(apiURL)
-      .then(function (response) {
-          return response.json();
-      })
-      .then(function (data) {
-          appendData(data);
-      })
-      .catch(function (err) {
-          console.log(err);
+    makeRequest(`${splicevardbAPI}/variants/filter`, 'POST', {
+        gene: ['COL4A5']
+    })
+    .then(function (data) {
+        appendData(data.data);
+    })
+    .catch(function (err) {
+        console.log(err);
     });
 }
 
 // Add Search Builder
 async function makeFilter() {
     $('#DataTables_Table_0_wrapper').prepend('<div id="filters"><button id="filterToggle" class="ui basic button">Launch Custom Filter</button></div>');
-    $('#filterToggle').on('click', function() {
-	var uniqueGenes = uniqueValues(3);
-	var gene_list = uniqueGenes[0];
-	comma_genes = uniqueGenes[1];
-	var gene_filter = '<div class="filter italic">' +
+    $('#filterToggle').on('click', async function() {
+        var allGenes = await getAllGenes();
+        var gene_list = Object.keys(allGenes);
+        // var gene_list = uniqueGenes[0];
+        // comma_genes = uniqueGenes[1];
+        var gene_filter = '<div class="filter italic">' +
             '<label>Gene List:</label><select id="geneFilter" class="ui multiple five column search clearable selection dropdown">' +
-            '<option value="">Gene</option>'
+            '<option value="COL4A5">COL4A5</option>';
 
-	gene_list.forEach(function (gene, index) {
-	    gene_filter = gene_filter + 
-		'<option value="' + gene + '">' + gene + '</option>'
-	});
-	$('#filters').html(gene_filter + '</select></div>');
-	
-	var validation_list = uniqueValues(5)[0]; 
-	var validation_filter = '<div class="filter">' +
+        gene_list.forEach(function (gene, index) {
+            gene_filter = gene_filter + 
+            '<option value="' + gene + '">' + gene + '</option>'
+        });
+        $('#filters').html(gene_filter + '</select></div>');
+        
+        var validation_list = uniqueValues(5)[0]; 
+        var validation_filter = '<div class="filter">' +
             '<label>Validation Method:</label><select id="valFilter" class="ui multiple search clearable selection dropdown">' +
-	    '<option value="">Method</option>'
-	
-	validation_list.forEach(function (validation, index) {
+            '<option value="">Method</option>'
+        
+        validation_list.forEach(function (validation, index) {
             validation_filter = validation_filter +
                 '<option value="' + validation + '">' + validation + '</option>'
         });
         $('#filters').append(validation_filter + '</select></div>');
 
-	var class_list = uniqueValues(6)[0];
+        var class_list = uniqueValues(6)[0];
         var classification_filter = '<div class="filter">' +
             '<label>Classification:</label><select id="classFilter" class="ui multiple search clearable selection dropdown">' +
             '<option value="">Classification</option>'
@@ -566,134 +766,104 @@ async function makeFilter() {
         });
         $('#filters').append(classification_filter + '</select></div>');
 
-	$('#filters').append('<div class="float right"><button id="removeFilter" class="ui basic button">Reset</button><button id="runFilter" class="ui cci_green button">Filter Results</button></div>');
-	$('#runFilter').on('mousedown', function() {
-    	    $('#filters button').addClass('loading');
-	});
-	$('#runFilter').on('mouseup', function() {
-	    $('#filters button').removeClass('loading');
-	    selected_genes=$('#geneFilter').val();
-    	    selected_val=$('#valFilter').val();
-    	    selected_class=$('#classFilter').val();
-    	    useFilter(selected_genes, selected_val, selected_class);
-	})
-
-	$('#removeFilter').on('mousedown', function() {
+        $('#filters').append('<div class="float right"><button id="removeFilter" class="ui basic button">Reset</button><button id="runFilter" class="ui cci_green button">Filter Results</button></div>');
+        $('#runFilter').on('mousedown', function() {
             $('#filters button').addClass('loading');
-	    $('.remove').click();
+        });
+        $('#runFilter').on('mouseup', function() {
+            $('#filters button').removeClass('loading');
+            selected_genes=$('#geneFilter').val().filter(g => g !== '');
+            selected_val=$('#valFilter').val().filter(v => v !== '');
+            selected_class=$('#classFilter').val().filter(c => c !== '');
+            if (selected_genes.length !== 0 || selected_val.length !== 0 || selected_class.length !== 0) {
+                useFilter(selected_genes, selected_val, selected_class);
+            }
+        })
+
+        $('#removeFilter').on('mousedown', function() {
+            $('#filters button').addClass('loading');
+            $('.remove').click();
         });
         $('#removeFilter').on('mouseup', function() {
             $('#filters button').removeClass('loading');
             var table = $('#DataTables_Table_0').DataTable();
-	    table.searchBuilder.rebuild();
-	    $('#gene_plot').dimmer('hide');
+            table.searchBuilder.rebuild();
+            $('#gene_plot').dimmer('hide');
             $('#gene_plot .dimmer').empty();
             document.getElementById('lollipop').style.display = "none";
             document.getElementById('lollipop_placeholder').style.display = "block";
         })
 
-	$('.ui.dropdown').dropdown();
+        $('.ui.dropdown').dropdown();
     });
 };
 
 // Run filters
-function useFilter(genes,validations,classifications) {
-    var table = $('#DataTables_Table_0').DataTable();
-    
-    var comma_search = {
-	condition: 'contains',
-        data: 'Gene',
-        origData: 'gene_symbol_list',
-        type: 'html',
-        value: [',']
-    }
-    
-    var comma_genes_present = genes.filter(value => comma_genes.includes(value));
-    var comma_genes_search = []
-
-    comma_genes_present.forEach(function(gene) {
-        comma_genes_search.push( {
-            condition: 'contains',
-            data: 'Gene',
-            origData: 'gene_symbol_list',
-            type: 'html',
-            value: [gene]
-        })
+async function useFilter(genes,validations,classifications) {
+    const filtered = await filterVariants({
+        gene: genes.filter(g => g !== ''),
+        classification: classifications.filter(c => c !== ''),
+        validation: validations.filter(v => v !== '')
     });
-
-    var gene_search = []
-    genes.forEach(function(gene) {
-	gene_search.push({
-            condition: '=',
-            data: 'Gene',
-            origData: 'gene_symbol_list',
-            type: 'html',
-            value: [gene]
-    	})
-    });
-    
-    var val_search = []
-    validations.forEach(function(validation) {
-	val_search.push({
-	    condition: 'contains',
-            data: 'Validation',
-            origData: 'validation_report',
-            type: 'html',
-            value: [validation]
-        })
-    });
-
-    var class_search = []
-    classifications.forEach(function(classification) {
-	class_search.push({
-            condition: '=',
-            data: 'Classification',
-            origData: 'classification',
-            type: 'html',
-            value: [classification]
-	})
-    });
-
-    var genes_json = JSON.parse(JSON.stringify({"criteria": gene_search, "logic": "OR"}))
-    var comma_genes_json = JSON.parse(JSON.stringify({"criteria": comma_genes_search, "logic": "OR"}))	
-    var commas_json = JSON.parse(JSON.stringify({"criteria": [comma_search, comma_genes_json], "logic": "AND"}))
-    var genes_full_json = JSON.parse(JSON.stringify({"criteria": [genes_json, commas_json], "logic": "OR"}))
-
-    var val_json = JSON.parse(JSON.stringify({"criteria": val_search, "logic": "OR"}))
-    var class_json = JSON.parse(JSON.stringify({"criteria": class_search, "logic": "OR"}))
-
-    var criteria_list = [(comma_genes_present.length ? genes_full_json : genes_json), val_json, class_json]
-    var filter_search = JSON.parse(JSON.stringify({"criteria": criteria_list, "logic": "AND"}))
-
-    console.log(filter_search);
-    table.searchBuilder.rebuild(filter_search);
+    const newVariants = filtered.data;
+    var datatable = $('#DataTables_Table_0').DataTable();
+    datatable.clear().draw();
+    datatable.rows.add(newVariants); // Add new data
+    datatable.columns.adjust().draw(); // Redraw the DataTable
+    // populateProteinPaint(fetchTableVariants());
 }
 
 // Get unique values from table
 function uniqueValues(column, data_type) {
     if (data_type == "filtered") {
-	data = fetchTableVariants(column);
+        data = fetchTableVariants(column);
     } else {
-	data = fetchVariants(column);
+	    data = fetchVariants(column);
     }
 
     let list = [];
     let commas = []
     data.forEach(function(entry) {
-	if (entry.includes(",")) {
-	    entry.split(",").forEach(function(split) {
-		list.push(split);
-		commas.push(split)
-    	    });
-	} else {
-	    list.push(entry);
-	}
+        if (entry.includes(",")) {
+            entry.split(",").forEach(function(split) {
+                list.push(split);
+                commas.push(split)
+            });
+        } else {
+            list.push(entry);
+        }
     });
     let uniqueList = [...new Set(list.sort())];
     let uniqueCommasList = [...new Set(commas.sort())];
     return [uniqueList.sort(), uniqueCommasList.sort()];
 }
 
+function jsonToTSV(jsonData) {
+    let tsv = '';
+    // Get the headers
+    let headers = Object.keys(jsonData[0]);
+    tsv += headers.join('\t') + '\n';
+    // Add the data
+    jsonData.forEach(function (row) {
+        let data = headers.map(header => JSON.stringify(row[header])).join('\t'); // Add JSON.stringify statement
+        tsv += data + '\n';
+    });
+    return tsv;
+}
+
+async function download() {
+    const variants = Object.values($('#results table').DataTable().rows( {search:'applied'} ).data()).map(d => `${d.variant_id}`);
+    const variantDownload = await downloadVariants({variant_ids: variants});
+    const tsvData = jsonToTSV(variantDownload);
+    const blob = new Blob([tsvData], { type: 'text/tsv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'splicevardb.download.tsv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
 
 // Adds passed data into the display table
 function appendData(variants) {
@@ -702,13 +872,13 @@ function appendData(variants) {
 
     var table = $('.variants table').DataTable({
         data: variants,
-	dom: 'QfrtipB',
-	buttons: [
+	    dom: 'QfrtipB',
+	    buttons: [
             {
             	filename: 'splicevardb.' + date_tag,
-		extension: '.tsv',
-		fieldSeparator: '\t',
-                text: 'Download All Variants',
+		        extension: '.tsv',
+		        fieldSeparator: '\t',
+                text: 'Download Variants',
                 exportOptions: {
                     modifier: {
                         search: 'none'
@@ -717,98 +887,72 @@ function appendData(variants) {
                 attr: {
                     id: 'download_all'
                 },
-            	action: function ( e, dt, node, config ) {
-		    if (TOU) {
-			$.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, node, config);
+            	action: async function ( e, dt, node, config ) {
+                    $("#download_all").addClass('loading');
+                    if (localStorage.getItem('splicevardb_token')) {
+			            await download();
+                        $("#download_all").removeClass('loading');
                     } else {
-                    	$('#Terms')
-                            .flyout('show')
-                        ;
-			var awaitTOC = window.setInterval(function(){
-			    if ( !$('#Terms').hasClass("visible") ) {
-				if (TOU) {
-				    $("#download_all").trigger("click");
-        		        } 
-				clearInterval(awaitTOC);
-			    }
-    			},500);
-                    }
-		}
-            },
-	    {
-                filename: 'splicevardb.' + date_tag + '.filtered',
-		extension: '.tsv',
-                fieldSeparator: '\t',
-                text: 'Download Filtered Variants',
-		attr: {
-		    id: 'download_filtered'
-		},
-                action: function ( e, dt, node, config ) {
-                    if (TOU) {
-                        $.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, node, config);
-		    } else if (tableCount() < 100) {
-                    	$.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, node, config);
-		    } else {
-                        $('#Terms')
-                            .flyout('show')
-                        ;
+                    	$('#Signin').flyout('show');
                         var awaitTOC = window.setInterval(function(){
                             if ( !$('#Terms').hasClass("visible") ) {
-                                if (TOU) {
-				    $("#download_filtered").trigger("click");
-                                } 
-				clearInterval(awaitTOC);
+                                if (localStorage.getItem('splicevardb_token')) {
+                                    $("#download_all").trigger("click");
+                                }
+                                $("#download_all").removeClass('loading'); 
+                                clearInterval(awaitTOC);
                             }
                         },500);
                     }
-                }
+		        }
             }
     	],
         columns: [
-                {
-                    className: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: '',
-                },
-                { data: 'chr' },
-		{ data: 'chr' },
-                { data: 'gene_symbol_list' },
-                { data: 'hgvs_RefSeq' },
-                { data: 'method_report'},
-                { data: 'classification'},
-		{ data: 'location'}
-            ],
-            columnDefs: [{
+            {
+                className: 'dt-control',
+                orderable: false,
+                data: null,
+                defaultContent: '',
+            },
+            { data: 'chr' },
+		    { data: 'chr' },
+            { data: 'gene_symbol_list' },
+            { data: 'hgvs_RefSeq' },
+            { data: 'method_report'},
+            { data: 'classification'},
+		    { data: 'location'}
+        ],
+        columnDefs: [
+            {
                 "target": 1,
                 "render": function( data, type, row) {
                     return data +'-'+ row.pos_hg38 +'-'+ row.ref +'-'+ row.alt;
                 },
-	    },
-	    {
+            },
+	        {
                 "target": 2,
                 "render": function( data, type, row) {
                     return data +'-'+ row.pos_hg19 +'-'+ row.ref +'-'+ row.alt;
             	},
             },
-	    {
-		"target": 3,
-		"render": function( data, type, row) {
+            {
+                "target": 3,
+                "render": function( data, type, row) {
                     return '<i>' + data + '</i>';
-		},
-	    },
-	    {
-		"target": 7,
-		"visible": false,
-		"searchable": true
-	    }
+                },
+            },
+	        {
+                "target": 7,
+                "visible": false,
+                "searchable": true
+	        }
 	    ]
     });
 
     $('tbody').on('click', 'td.dt-control', async function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);
-	console.log(row)
+	    // console.log(row)
         if (row.child.isShown()) {
             // This row is already open - close it
             row.child.hide();
@@ -816,50 +960,45 @@ function appendData(variants) {
         } else {
             // Open this row
 	    row.child(formatChild(row.data(), row)).show();
-            tr.addClass('shown');
+        tr.addClass('shown');
 
 	    $('.igvToggle').on('click', function() {
     		var table = $('.variants table').DataTable()
     		var tr = $(this).closest('tr').prev('.shown');
     		var row = table.row(tr);
-		$(this).hide();
-		formatIGV(row);
+		    $(this).hide();
+		    formatIGV(row);
 	    });
-	
-	    // row.child('<div class="ui segment" style="height: 60px; margin: 0!important;"><div class="ui active inverted dimmer" style="height: 60px; padding: 0; margin: 1em 0;"><div class="ui text loader">Loading Variant Information</div></div></div>').show();
-            let myVariant_format = "chr" + row.data().chr + ":g." + row.data().pos_hg19 + row.data().ref + ">" + row.data().alt;
-            let myVariant_data = await getMyVariant(myVariant_format);
-	    if (myVariant_data.code) {
-		myVariant_data = "none";
-	    }
 
-	    let clinvar_data = "none";
-
-            if (myVariant_data.clinvar) {
-		let clinvar_id = myVariant_data.clinvar.variant_id;
-		let clinvar_api = await getClinvar(clinvar_id);
-		clinvar_data = clinvar_api.result[clinvar_id]
-	    }
-
-	    formatVariantInfo(row.data(), myVariant_data, clinvar_data);
+	    formatVariantInfo(row.data(), await getMyVariant(row.data().variant_id));
 		
-            // let ensembl_id = myVariant_data.cadd.gene[0].gene_id;
-            // let myGene_data = await getMyGene(ensembl_id);
-	
-	    // let validation_data = await getValidation(row.data().variant_id);
+        // let ensembl_id = myVariant_data.cadd.gene[0].gene_id;
+        // let myGene_data = await getMyGene(ensembl_id);
 	    formatValidation(await getValidation(row.data().variant_id));
 
-            let broadLookup_format = "chr" + row.data().chr + "-" + row.data().pos_hg19 + "-" + row.data().ref + "-" + row.data().alt;
-            let spliceAI_data = await getSpliceAI(broadLookup_format);
-	    let pangolin_data = await getPangolin(broadLookup_format);
-
-            if (spliceAI_data && pangolin_data) {
-	    	var spliceAI_score = spliceAI_data.scores[0]
-		var pangolin_score = pangolin_data.scores[0]
-		formatInSilicos(row.data(), spliceAI_score, pangolin_score);
+        // let broadLookup_format = "chr" + row.data().chr + "-" + row.data().pos_hg19 + "-" + row.data().ref + "-" + row.data().alt;
+	    // let pangolin_data = await getPangolin(broadLookup_format);
+        const spliceai = parseJwt(localStorage.getItem('splicevardb_token')).sub.spliceai
+        if (localStorage.getItem('splicevardb_token') && spliceai) {
+            const spliceai_data = await getSpliceAI(row.data().variant_id);
+            // console.log(spliceai_data)
+            formatInSilicos(row.data(), spliceai_data);
+        } else {
+            if (!localStorage.getItem('splicevardb_token')) {
+                formatInSilicos(row.data(), null, error='login');
             } else {
-		$('.insilico_id' + row.data().variant_id).append('<p>ERROR: No Scores Returned.</p>');
-	    }
+                formatInSilicos(row.data(), null, error='permission');
+            }
+        }
+        
+
+        // if (spliceAI_data && pangolin_data) {
+	    // 	var spliceAI_score = spliceAI_data.scores[0]
+		//     var pangolin_score = pangolin_data.scores[0]
+		    
+        // } else {
+		//     $('.insilico_id' + row.data().variant_id).append('<p>ERROR: No Scores Returned.</p>');
+	    // }
 
 	    // formatIGV(row)
 	}
@@ -871,44 +1010,44 @@ function formatIGV(row) {
     if (genome_build == "hg19") {
 	var variant_pos = row.data().pos_hg19;
 	var reference_object = {
-    	    "id": "hg38",
-    	    "name": "Human (GRCh37/hg19)",
-    	    "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fa",
-	    "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fa.fai",
-    	    "cytobandURL": "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/cytoBandIdeo.txt",
-	    "tracks": [
-      		{
-        	    "name": "Refseq Genes",
-		    "format": "refgene",
-        	    "url": "https://s3.amazonaws.com/igv.org.genomes/hg19/refGene.txt.gz",
-        	    "order": 1000000,
-        	    "indexed": false,
-		    "visibilityWindow": -1,
-		    "removable": false,
-		    "displayMode": "COLLAPSED"
-      		}
-	    ]
+        "id": "hg38",
+        "name": "Human (GRCh37/hg19)",
+        "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fa",
+        "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fa.fai",
+        "cytobandURL": "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/cytoBandIdeo.txt",
+        "tracks": [
+            {
+                "name": "Refseq Genes",
+            "format": "refgene",
+                "url": "https://s3.amazonaws.com/igv.org.genomes/hg19/refGene.txt.gz",
+                "order": 1000000,
+                "indexed": false,
+            "visibilityWindow": -1,
+            "removable": false,
+            "displayMode": "COLLAPSED"
+            }
+        ]
   	}
     } else if (genome_build == "hg38") {
 	var variant_pos = row.data().pos_hg38;
 	var reference_object = {
-            "id": "hg38",
-            "name": "Human (GRCh38/hg38)",
-            "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa",
-            "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa.fai",
-            "cytobandURL": "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/cytoBandIdeo.txt",
-            "tracks": [
-                {
-                    "name": "Refseq Genes",
-		    "format": "refgene",
-                    "url": "https://s3.amazonaws.com/igv.org.genomes/hg38/refGene.txt.gz",
-                    "order": 1000000,
-                    "indexed": false,
-		    "visibilityWindow": -1,
-      		    "removable": false,
-		    "displayMode": "COLLAPSED"
-                }
-            ]
+        "id": "hg38",
+        "name": "Human (GRCh38/hg38)",
+        "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa",
+        "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa.fai",
+        "cytobandURL": "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/cytoBandIdeo.txt",
+        "tracks": [
+            {
+                "name": "Refseq Genes",
+                "format": "refgene",
+                "url": "https://s3.amazonaws.com/igv.org.genomes/hg38/refGene.txt.gz",
+                "order": 1000000,
+                "indexed": false,
+                "visibilityWindow": -1,
+                "removable": false,
+                "displayMode": "COLLAPSED"
+            }
+        ]
 	}
     }
 
@@ -970,6 +1109,9 @@ function formatIGV(row) {
 function generateProteinPaint(data, gene) {
     document.getElementById('lollipop_placeholder').style.display = "none";
     $('#lollipop').empty();
+    if (gene === '') {
+        return;
+    }
     proteinPaintLoad();
     let proteinPaintData = convert_to_protein_paint(data);
     runproteinpaint({
@@ -1037,138 +1179,105 @@ function convert_to_protein_paint(snv) {
 function formatChild(d, row) {
     return (
         '<div class="ui grid">' +
-
-        '<div class="ui row">' +
-	'<div class="one wide column" style="padding: 0;"></div>' + //padding
-	'<div class="varinfo_id' + d.variant_id + ' five wide column" style="padding: 0;"><h5>Variant Information</h5></div>' +
-        '<div class="insilico_id' + d.variant_id + ' five wide column" style="padding: 0;"><h5>Splicing <i>In Silicos</i>:</h5></div>' +
-        '<div class="validation_id' + d.variant_id + ' five wide column" style="padding: 0"><h5>Validation Details</h5></div>' +
-	'</div>' +
-
-	'<div class="row">' +
-	'<div class="sixteen wide column" style="padding: 0;">' +
-        '<div class="variant-visualisation" id="igv-div" style="padding: 5px 10px;">' +
-        '</div>' + 
-	'<div class="ui button igvToggle" style="width: 100%; padding: 10px 0; border-radius: 0 0 10px 10px">Load IGV</div>' +
-	'</div></div>'
+            '<div class="ui row">' +
+	            '<div class="one wide column" style="padding: 0;"></div>' + //padding
+	            '<div class="varinfo_id' + d.variant_id + ' five wide column" style="padding: 0;"><h5>Variant Information</h5></div>' +
+                '<div class="insilico_id' + d.variant_id + ' five wide column" style="padding: 0;"><h5>Splicing <i>In Silicos</i>:</h5></div>' +
+                '<div class="validation_id' + d.variant_id + ' five wide column" style="padding: 0"><h5>Validation Details</h5></div>' +
+	        '</div>' +
+	        '<div class="row">' +
+	            '<div class="sixteen wide column" style="padding: 0;">' +
+                    '<div class="variant-visualisation" id="igv-div" style="padding: 5px 10px;">' +
+                '</div>' + 
+	            '<div class="ui button igvToggle" style="width: 100%; padding: 10px 0; border-radius: 0 0 10px 10px">Load IGV</div>' +
+	        '</div>'+
+        '</div>'
     );
 }
 
-function formatVariantInfo(d, myVariant_data, clinvar_data) {
-    let clinvar_sig = "Not Present in ClinVar";
-    let clinvar_review_status = "none";
-
-    if (clinvar_data != "none") {
-        clinvar_sig = clinvar_data.clinical_significance.description;
-        clinvar_review_status = clinvar_data.clinical_significance.review_status;
-    }
-
-    if (clinvar_sig == "Pathogenic" || clinvar_sig == "Likely pathogenic" || clinvar_sig == "Pathogenic/Likely pathogenic" ) {
-        clinvar_colour = "#FFEFEF";
-    } else if (clinvar_sig == "Benign" || clinvar_sig == "Likely benign" || clinvar_sig == "Benign/Likely benign") {
-        clinvar_colour = "#EAF8ED";
-    } else if (clinvar_sig == "Uncertain significance") {
-        clinvar_colour = "#EDFAFD";
+function formatVariantInfo(d, myVariant_data) {
+    if (myVariant_data.annotation) {
+        $('.varinfo_id' + d.variant_id).html(
+            '<h5>Variant Information</h5>' +
+            '<div class="clinvar-label"></div>' +
+            '<div class="ui segment clinvar" style="background-color: ' + myVariant_data.annotation.clinvar_colour + '; margin: 0.5em 0; padding: 0.5em;">' +
+            '<h5>' + myVariant_data.annotation.clinvar_sig + '</h5>'+
+            (myVariant_data.annotation.clinvar_star_rating == 0 ? '</div>' : '<div class="clinvar-star" style="--rating: ' + myVariant_data.annotation.clinvar_star_rating + ';"></div></div>') +
+            (myVariant_data.annotation.rsid ? '<p>rsID: <a href="https://www.ncbi.nlm.nih.gov/snp/' + myVariant_data.annotation.rsid + '" target="_blank">' + myVariant_data.annotation.rsid + '</a></p>' : "" ) +
+            '<p>gnomAD Genome AF: ' + myVariant_data.annotation.genome_af + '</p>' +
+            '<p>gnomAD Exome AF: ' + myVariant_data.annotation.exome_af + '</p>' +
+            '<p>gnomAD Homozygotes: ' + (myVariant_data.annotation.genome_hom + myVariant_data.annotation.exome_hom) + '</p>' +
+            '<p>Variant Location: ' + d.location + '</p>' +
+            '<p>Consequence: ' + myVariant_data.annotation.consequence + '</p>'
+        );
     } else {
-        clinvar_colour = "FDFDED";
+        $('.varinfo_id' + d.variant_id).html(
+            '<h5>Variant Information</h5>' +
+            '<div class="clinvar-label"></div>' +
+            '<div class="ui segment clinvar" style="background-color: #FDFDED; margin: 0.5em 0; padding: 0.5em;">' +
+            '<h5>Not Present in ClinVar</h5></div>'+
+            '<p>gnomAD Genome AF: 0</p>' +
+            '<p>gnomAD Exome AF: 0</p>' +
+            '<p>gnomAD Homozygotes: 0</p>' +
+            '<p>Variant Location: ' + d.location + '</p>' +
+            '<p>Consequence: N/A</p>'
+        );
     }
-
-    if (clinvar_review_status == "practice guideline") {
-        var clinvar_star_rating = 4;
-    } else if (clinvar_review_status == "reviewed by expert panel") {
-        var clinvar_star_rating = 3;
-    } else if (clinvar_review_status == "criteria provided, multiple submitters, no conflicts") {
-        var clinvar_star_rating = 2;
-    } else if (clinvar_review_status == "criteria provided, conflicting interpretations" || clinvar_review_status == "criteria provided, single submitter" ) {
-        var clinvar_star_rating = 1;
-    } else {
-        var clinvar_star_rating = 0;
-    }
-
-    if (myVariant_data.dbsnp) {
-        var rsid_present = 1;
-        var rsid = myVariant_data.dbsnp.rsid;
-    } else {
-        var rsid_present = 0;
-    }
-
-    let genome_af = 0;
-    let exome_af = 0;
-    let genome_homs = 0;
-    let exome_homs = 0;
-    if (myVariant_data.gnomad_genome) {
-        genome_af = myVariant_data.gnomad_genome.af.af;
-        genome_hom = myVariant_data.gnomad_genome.hom.hom;
-    }
-    if (myVariant_data.gnomad_exome) {
-        exome_af = myVariant_data.gnomad_exome.af.af;
-        exome_hom = myVariant_data.gnomad_exome.hom.hom;
-    }
-
-    let consequence = "N/A";
-    if (myVariant_data.snpeff) {
-        var cons_present = 1
-        if (myVariant_data.snpeff.ann.length) {
-            consequence = myVariant_data.snpeff.ann[0].effect;
-        } else {
-            consequence = myVariant_data.snpeff.ann.effect;
-        }
-    } else if (myVariant_data.cadd) {
-        var cons_present = 1;
-        if (typeof myVariant_data.cadd.consdetail == "string") {
-            consequence = myVariant_data.cadd.consdetail;
-        } else {
-            consequence = myVariant_data.cadd.consdetail[0];
-        }
-    } else {
-        var cons_present = 0;
-    }
-
-    if (consequence) {
-        consequence = consequence.replaceAll("&"," & ").replaceAll("_"," ").replaceAll(" variant","")
-        consequence = consequence.charAt(0).toUpperCase() + consequence.slice(1);
-    }
-
-    $('.varinfo_id' + d.variant_id).html('<h5>Variant Information</h5>' +
-        '<div class="clinvar-label"></div>' +
-        '<div class="ui segment clinvar" style="background-color: ' + clinvar_colour + '; margin: 0.5em 0; padding: 0.5em;">' +
-            '<h5>' + clinvar_sig + '</h5>'+
-            (clinvar_star_rating == 0 ? '</div>' : '<div class="clinvar-star" style="--rating: ' + clinvar_star_rating + ';"></div></div>') +
-        (rsid_present ? '<p>rsID: <a href="https://www.ncbi.nlm.nih.gov/snp/' + rsid + '" target="_blank">' + rsid + '</a></p>' : "" ) +
-        '<p>gnomAD Genome AF: ' + genome_af + '</p>' +
-        '<p>gnomAD Exome AF: ' + exome_af + '</p>' +
-        '<p>gnomAD Homozygotes: ' + (genome_homs + exome_homs) + '</p>' +
-        '<p>Variant Location: ' + d.location + '</p>' +
-        '<p>Consequence: ' + consequence + '</p>'
-    );
 }
 
-function formatInSilicos(d, spliceAI, pangolin) {
-    $('.insilico_id' + d.variant_id).html('<h5>Splicing <i>In Silicos</i>:</h5>' +
-        '<p>Introme: ' + d.introme + '</p>' +
-        '<p>SpliceAI:</p>' +
-        '<ul><li>Acceptor Gain: ' + Math.round(spliceAI.DS_AG * 100)/100 + ' @ ' + spliceAI.DP_AG + '</li>' +
-        '<li>Acceptor Loss: ' + Math.round(spliceAI.DS_AL * 100)/100 + ' @ ' + spliceAI.DP_AL + '</li>' +
-        '<li>Donor Gain: ' + Math.round(spliceAI.DS_DG * 100)/100 + ' @ ' + spliceAI.DP_DG + '</li>' +
-        '<li>Donor Loss: ' + Math.round(spliceAI.DS_DL * 100)/100 + ' @ ' + spliceAI.DP_DL + '</li></ul>' +
-        '<p>Pangolin:</p>' +
-        '<ul><li>Gain: ' + Math.round(pangolin.DS_SG * 100)/100 + ' @ ' + pangolin.DP_SG + '</li>' +
-        '<li>Loss: ' + Math.round(pangolin.DS_SL * 100)/100 + ' @ ' + pangolin.DP_SL + '</li>'
-    );
+function formatInSilicos(d, spliceAI_data, error=false) {
+    if (!error) {
+        if (spliceAI_data.annotation) {
+            $('.insilico_id' + d.variant_id).html('<h5>Splicing <i>In Silicos</i>:</h5>' +
+                '<p>Introme: ' + d.introme + '</p>' +
+                '<p>SpliceAI:</p>' +
+                '<ul><li>Acceptor Gain: ' + spliceAI_data.annotation.splice_ai.acceptor_gain + '</li>' +
+                '<li>Acceptor Loss: ' + spliceAI_data.annotation.splice_ai.acceptor_loss + '</li>' +
+                '<li>Donor Gain: ' + spliceAI_data.annotation.splice_ai.donor_gain + '</li>' +
+                '<li>Donor Loss: ' + spliceAI_data.annotation.splice_ai.donor_loss + '</li></ul>' +
+                '<p>Pangolin:</p>' +
+                '<ul><li>Gain: ' + spliceAI_data.annotation.pangolin.gain + '</li>' +
+                '<li>Loss: ' + spliceAI_data.annotation.pangolin.loss + '</li>'
+            );
+        } else {
+            $('.insilico_id' + d.variant_id).html('<h5>Splicing <i>In Silicos</i>:</h5>' +
+                '<div class="ui segment clinvar" style="background-color: #FDFDED; margin: 0.5em 0; padding: 0.5em;">' +
+                '<h5>Not Present in SpliceAI</h5></div>'
+            )
+        }
+    } else {
+        if (error === 'login') {
+            $('.insilico_id' + d.variant_id).html('<h5>Splicing <i>In Silicos</i>:</h5>' +
+                '<div class="ui segment clinvar" style="background-color: #FDFDED; margin: 0.5em 0; padding: 0.5em;">' +
+                '<h5><a id="spliceai_login">Sign in</a> to see <i>In Silicos</i> scores</h5></div>'
+            )
+            $("#spliceai_login").click(() => {
+                $('#Signin').flyout('show');
+                $('.ui.dropdown').dropdown();
+            })
+        } else {
+            $('.insilico_id' + d.variant_id).html('<h5>Splicing <i>In Silicos</i>:</h5>' +
+                '<div class="ui segment clinvar" style="background-color: #FDFDED; margin: 0.5em 0; padding: 0.5em;">' +
+                "<h5>You don't have permission to view SpliceAI In-Silico scores</h5></div>"
+            )
+        }
+    }
 }
 
 // Format and append third column in variant expand
 // Add entry for each validation attached to that variant ID
 function formatValidation(v) {
-    console.log(v)
-    v.forEach(function(item, index) {
-    	$('.validation_id' + item.variant_id).append(
-            '<p>' + item.method + 
-	    '<ul><li><a href="https://doi.org/' + item.doi +'" target="_blank">' + item.doi + '</a></p>' +
-            (item.tissue ? '<li>Tissue used: ' + item.tissue + '</li>' : "" ) +
-	    (item.metric1_name ? '<li>' + item.metric1_name + ': ' + item.metric1 + '</li>' : "" ) +
-	    (item.metric2 ? '<li>' + item.metric2_name + ': ' + (item.doi == "10.1371/journal.pgen.1009884" ? (item.metric2 == 0 ? "<0.05" : ">=0.05" ) : item.metric2) + '</li>' : "" ) +	    
-            '<li>Classification: ' + item.classification + '</li></ul>'
-    	);
-    });
+    if (v.validation) {
+        Object.keys(v.validation).map((method, index) => {
+            const item = v.validation[method];
+            $('.validation_id' + v.variant_id).append(
+                '<p>' + method + 
+            '<ul><li><a href="https://doi.org/' + item.doi +'" target="_blank">' + item.doi + '</a></p>' +
+                (item.tissue ? '<li>Tissue used: ' + item.tissue + '</li>' : "" ) +
+                (item.metric1_name ? '<li>' + item.metric1_name + ': ' + item.metric1 + '</li>' : "" ) +
+                (item.metric2_name ? '<li>' + item.metric2_name + ': ' + (item.doi == "10.1371/journal.pgen.1009884" ? (item.metric2 == 0 ? "<0.05" : ">=0.05" ) : item.metric2) + '</li>' : "" ) +	    
+                '<li>Classification: ' + item.classification + '</li></ul>'
+            );
+        })
+    }
 }
