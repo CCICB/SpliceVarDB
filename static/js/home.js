@@ -17,6 +17,18 @@ function sleep(ms) {
 $( document ).ready(function() {
     call_api();
 
+    // $('#spliceai_form #spliceai_terms').popup({ on: 'hover'});
+    $('#spliceai_form, #spliceai_terms').hover(
+        function() {
+            $('#spliceai_terms').show()
+        },
+        function() {
+            setTimeout(function() {
+                if(!($('#spliceai_terms:hover').length > 0))
+                    $('#spliceai_terms').hide();
+            }, 300);
+        });  
+
     if (localStorage.getItem('splicevardb_token')) {
         $('#Login_pull').text('Token');
         const token = localStorage.getItem('splicevardb_token');

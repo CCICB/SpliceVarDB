@@ -216,11 +216,11 @@
                         <input placeholder="Role" name="role" type="text">
                     </div>
                     <div class="field" id='commercial_purpose' hidden>
-                        <label>Purpose for Download*</label>
-                        <textarea placeholder="The purpose for downloading data from SpliceVarDB" name="purpose_commercial" type="text"></textarea>
+                        <label>Reasons for Registering*</label>
+                        <textarea placeholder="The reasons for accessing SpliceVarDB" name="purpose_commercial" type="text"></textarea>
                     </div>
   		            <div class="field" id='purpose'>
-                        <label>Purpose for Download*</label>
+                        <label>Reasons for Registering*</label>
                         <select name="purpose" multiple="" class="ui dropdown">
                             <option value="">Select Purpose</option>
                             <option value="curation">Variant Curation</option>
@@ -231,10 +231,21 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
+                    <div 
+                        class="field"
+                        id="spliceai_terms"
+                        style="display: none;"
+                    >
+                        <p>SpliceVarDB fetches SpliceAI scores for each variant, which requires that you have a valid <a href='https://github.com/Illumina/SpliceAI?tab=readme-ov-file#license'>License</a></p>
+                        <p>By ticking this box, you confirm that you have a valid License to use these scores.</p>
+                        <p>If you do not tick the box, then you can still use SplicevarDB, you just won't see these scores.</p>
+                    </div>
                     <div class="inline field">
                         <div class="ui checkbox">
                             <input type="checkbox" name="spliceai" id="spliceai_checkbox">
-                            <label>I have permission to view SpliceAI scores</label>
+                            <label id="spliceai_form">
+                                <u>I have permission to view SpliceAI scores</u>
+                            </label>
                         </div>
                     </div>
 		            <div class="inline field">
