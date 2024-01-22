@@ -1,5 +1,5 @@
-// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+// const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
@@ -974,10 +974,7 @@ function appendData(variants) {
         // let myGene_data = await getMyGene(ensembl_id);
 	    formatValidation(await getValidation(row.data().variant_id));
 
-        // let broadLookup_format = "chr" + row.data().chr + "-" + row.data().pos_hg19 + "-" + row.data().ref + "-" + row.data().alt;
-	    // let pangolin_data = await getPangolin(broadLookup_format);
-        const spliceai = parseJwt(localStorage.getItem('splicevardb_token')).sub.spliceai
-        if (localStorage.getItem('splicevardb_token') && spliceai) {
+        if (localStorage.getItem('splicevardb_token') && parseJwt(localStorage.getItem('splicevardb_token')).sub.spliceai) {
             const spliceai_data = await getSpliceAI(row.data().variant_id);
             // console.log(spliceai_data)
             formatInSilicos(row.data(), spliceai_data);
