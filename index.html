@@ -12,8 +12,8 @@
 	    <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SpliceVarDB</title>
-        <!-- <link rel="stylesheet" href="splicevardb/static/css/home.css"> -->
-        <link rel="stylesheet" href="/static/css/home.css">
+        <link rel="stylesheet" href="splicevardb/static/css/home.css">
+        <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -231,20 +231,21 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div 
-                        class="field"
-                        id="spliceai_terms"
-                        style="display: none;"
-                    >
-                        <p>SpliceVarDB fetches SpliceAI scores for each variant, which requires that you have a valid <a href='https://github.com/Illumina/SpliceAI?tab=readme-ov-file#license'>License</a></p>
-                        <p>By ticking this box, you confirm that you have a valid License to use these scores.</p>
-                        <p>If you do not tick the box, then you can still use SplicevarDB, you just won't see these scores.</p>
-                    </div>
                     <div class="inline field">
-                        <div class="ui checkbox">
+                        <div class="ui checkbox" id="spliceai_form">
                             <input type="checkbox" name="spliceai" id="spliceai_checkbox">
-                            <label id="spliceai_form">
-                                <u>I have permission to view SpliceAI scores</u>
+                            <label>
+                                <div 
+                                    class="item" 
+                                    id="spliceai_terms"
+                                    data-html="
+                                        <p>SpliceVarDB fetches SpliceAI scores for each variant, which requires that you have a valid License</p>
+                                        <p>By ticking this box, you confirm that you have a valid License to use these scores.</p>
+                                        <p>If you do not tick the box, then you can still use SplicevarDB, you just won't see these scores.</p>
+                                    "
+                                >
+                                    I have <u><a href="https://github.com/Illumina/SpliceAI?tab=readme-ov-file#license" target="_blank">permission</a></u> to view SpliceAI scores
+                            </div>
                             </label>
                         </div>
                     </div>
@@ -346,6 +347,6 @@
         </div>
     </div>
 </body>
-<!-- <script src="splicevardb/static/js/home.js" defer></script> -->
-<script src="static/js/home.js" defer></script>
+<script src="splicevardb/static/js/home.js" defer></script>
+<!-- <script src="static/js/home.js" defer></script> -->
 </html>
