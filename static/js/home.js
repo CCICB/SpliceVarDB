@@ -1,13 +1,5 @@
-// const apiURL = 'https://compbio.ccia.org.au/splicevardb-api/variants'
-const apiURL = 'http://127.0.0.1:5000/splicevardb-api/variants'
-const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const validationURL = 'https://compbio.ccia.org.au/splicevardb-api/validation/'
-const myVariant = 'https://myvariant.info/v1/variant/'
-const clinvar = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&retmode=json&id="
-const myGene = "https://mygene.info/v3/gene/"
-const spliceAILookup = "https://spliceailookup-api.broadinstitute.org/spliceai/"
-const pangolinLookup = "https://spliceailookup-api.broadinstitute.org/pangolin/"
-const termsAPI = "https://compbio.ccia.org.au/splicevardb-api/termsAccept/"
+// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
