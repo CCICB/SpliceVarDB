@@ -1,5 +1,5 @@
-const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-// const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
