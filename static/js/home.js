@@ -660,7 +660,13 @@ function proteinPaintLoad() {
 }
 
 makeRequest = async (path, method, body) => {
-    const token = localStorage.getItem("splicevardb_token");
+    let token = '';
+    if (localStorage.getItem("splicevardb_token")) {
+        token = localStorage.getItem("splicevardb_token");
+    } else {
+        token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IjBiM2VjYjFjLTVhMDAtMTM4Yi0yYjRjLTdlYjdjZmNhMTA1YiIsImlhdCI6MTUxNjIzOTAyMn0.PByel7nVtTsKJLXIekcN_kbl1eHV0K-eBwq6zee9xTQ'
+    }
+
     return fetch(path, {
         method: method || "GET",
         headers: {
@@ -731,7 +737,7 @@ async function makeFilter() {
     $('#DataTables_Table_0_wrapper').prepend('<div id="filters"><button id="filterToggle" class="ui basic button">Launch Custom Filter</button></div>');
     $('#filterToggle').on('click', async function() {
         var allGenes = await getAllGenes();
-        var gene_list = Object.keys(allGenes);
+        var gene_list = allGenes;
         // var gene_list = uniqueGenes[0];
         // comma_genes = uniqueGenes[1];
         var gene_filter = '<div class="filter italic">' +
