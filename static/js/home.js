@@ -680,7 +680,7 @@ makeRequest = async (path, method, body) => {
         ...(body ? { body: JSON.stringify(body) } : "" ),
     }).then((res) => {
         if (res.status === 401) {
-            return false
+            return res.json();
         } else {
             return res.json();
         }
