@@ -1,5 +1,5 @@
-// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+// const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
@@ -38,6 +38,7 @@ $( document ).ready(function() {
         }
             
         $('#Signin #login_form').hide();
+        $('#Submit_pull').show();
         $('#TOU_pull').hide();
         $('#Login_pull').text('Token');
         $('#Signin #welcome_message').show();
@@ -111,6 +112,7 @@ function logout() {
     localStorage.removeItem('splicevardb_token');
     downloadButton();
     $('#TOU_pull').show();
+    $('#Submit_pull').hide();
     $('#Login_pull').text('Sign in');
     $('#Signin #login_form').show();
     $('#Signin #welcome_message').hide();
@@ -171,6 +173,8 @@ function displayLoader() {
     },500);
 }
 
+$('#Submit_pull').hide();
+
 $('#TOU_pull').on("click", function() {
     $('#Terms').flyout('show');
     $('.ui.dropdown').dropdown();
@@ -189,14 +193,16 @@ $('#Login_pull').on("click", function() {
 });
 
 $('#Submit_pull').on("click", function() {
-    $('#Submit')
-        .flyout('show')
-    ;
-    $('.ui.dropdown').dropdown();
-    $('.ui.radio.checkbox')
-      	.checkbox()
-    ;
-    submitOptions("published", "form");
+    if (localStorage.getItem('splicevardb_token')) {
+        $('#Submit')
+            .flyout('show')
+        ;
+        $('.ui.dropdown').dropdown();
+        $('.ui.radio.checkbox')
+            .checkbox()
+        ;
+        submitOptions("published", "template");
+    }
 });
 
 function submitOptions(source, format) {
@@ -252,94 +258,94 @@ function submitOptions(source, format) {
 $('#Submit form')
   .form({
     fields: {
-      name: {
-        identifier: 'name',
-        rules: [
-          {
-            type   : 'empty',
-            prompt : 'Please enter your name'
-          }
-        ]
-      },
-      email: {
-        identifier: 'email',
-        rules: [
-          {
-            type   : 'email',
-            prompt : 'Please enter a valid email'
-          }
-        ]
-      },
-      involved: {
-        identifier: 'involved',
-	depends: 'unpublished',
-        rules: [
-          {
-            type   : 'checked',
-            prompt : 'We require that the submitter of unpublished validation data be involved in the generation of the results.'
-          }
-        ]
-      },
-      doi: {
-        identifier: 'DOI',
-	depends: 'published',
-        rules: [
-	  {
-            type   : 'regExp[10.[0-9]{4,9}/[-._;()/:a-z0-9A-Z]+]',
-            prompt : 'Please provide a valid DOI.'
-          }
-        ]
-      },
-      variant: {
-        identifier: 'variant',
-        depends: 'form',
-        rules: [
-          {
-            type   : 'regExp[([0-9]{1,2}|X|Y)-([0-9]+)-(A|C|G|T)+-(A|C|G|T)+]',
-            prompt : 'Please provide a valid variant.'
-          }
-        ]
-      },
-      method: {
-        identifier: 'method',
-	depends: 'form',
-        rules: [
-          {
-            type   : 'empty',
-            prompt : 'Please enter a validation method'
-          }
-        ]
-      },
-      metric_name: {
-        identifier: 'metric_name',
-	depends: 'form',
-        rules: [
-          {
-            type   : 'empty',
-            prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
-          }
-        ]
-      },
-      metric_value: {
-        identifier: 'metric_value',
-        depends: 'metric_name',
-        rules: [
-          {
-            type   : 'empty',
-            prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
-          }
-        ]
-      },
-      template: {
-        identifier: 'templateFile',
-        depends: 'template',
-        rules: [
-          {
-            type   : 'empty',
-            prompt : 'Please supply the template file.'
-          }
-        ]
-      }
+    //   name: {
+    //     identifier: 'name',
+    //     rules: [
+    //       {
+    //         type   : 'empty',
+    //         prompt : 'Please enter your name'
+    //       }
+    //     ]
+    //   },
+    //   email: {
+    //     identifier: 'email',
+    //     rules: [
+    //       {
+    //         type   : 'email',
+    //         prompt : 'Please enter a valid email'
+    //       }
+    //     ]
+    //   },
+        involved: {
+            identifier: 'involved',
+            depends: 'unpublished',
+            rules: [
+                {
+                    type   : 'checked',
+                    prompt : 'We require that the submitter of unpublished validation data be involved in the generation of the results.'
+                }
+            ]
+        },
+        doi: {
+            identifier: 'DOI',
+            depends: 'published',
+            rules: [
+                {
+                    type   : 'regExp[10.[0-9]{4,9}/[-._;()/:a-z0-9A-Z]+]',
+                    prompt : 'Please provide a valid DOI.'
+                }
+            ]
+        },
+        // variant: {
+        //     identifier: 'variant',
+        //     depends: 'form',
+        //     rules: [
+        //         {
+        //             type   : 'regExp[([0-9]{1,2}|X|Y)-([0-9]+)-(A|C|G|T)+-(A|C|G|T)+]',
+        //             prompt : 'Please provide a valid variant.'
+        //         }
+        //     ]
+        // },
+        // method: {
+        //     identifier: 'method',
+        //     depends: 'form',
+        //     rules: [
+        //         {
+        //             type   : 'empty',
+        //             prompt : 'Please enter a validation method'
+        //         }
+        //     ]
+        // },
+        // metric_name: {
+        //     identifier: 'metric_name',
+        //     depends: 'form',
+        //     rules: [
+        //         {
+        //             type   : 'empty',
+        //             prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
+        //         }
+        //     ]
+        // },
+        // metric_value: {
+        //     identifier: 'metric_value',
+        //     depends: 'metric_name',
+        //     rules: [
+        //         {
+        //             type   : 'empty',
+        //             prompt : 'Please enter a validation metric. If no metric was obtained, please just use "Splice-altering" and "Yes/No".'
+        //         }
+        //     ]
+        // },
+        template: {
+            identifier: 'templateFile',
+            depends: 'template',
+            rules: [
+                {
+                    type   : 'empty',
+                    prompt : 'Please supply the template file.'
+                }
+            ]
+        }
     }
   })
 ;
@@ -373,6 +379,8 @@ async function loginSubmit() {
             $('#TOU_pull').hide();
             $('#Login_pull').text('Token');
             $('#Signin #welcome_message').show();
+
+            $('#Submit_pull').show();
             
             if (Date.now() >= parseJwt(token).exp * 1000) {
                 $('#Signin #welcome_message #welcome_token_refresh').addClass('cci_green');
@@ -661,6 +669,29 @@ function proteinPaintLoad() {
             clearInterval(ppLoadCheck);	
         }
     },500);
+}
+
+async function variantSubmit() {
+    const file = $("input[name=templateFile]").prop('files')[0];
+    const formData = new FormData();
+    formData.append("template", file);
+    let token = localStorage.getItem("splicevardb_token") ? localStorage.getItem("splicevardb_token") : '';
+    const requestOptions = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        method: "POST",
+        body: formData
+    };
+    
+    const response = await fetch(`${splicevardbAPI}/variants/submit`, requestOptions);
+    
+    if (response.status === 200) {
+        alert('Variants submitted successfully (review pending)');
+    } else {
+        const r = await response.json();
+        alert(`Submission failed: ${r.message}`);
+    }
 }
 
 makeRequest = async (path, method, body) => {

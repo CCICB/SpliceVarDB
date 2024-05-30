@@ -12,8 +12,8 @@
 	    <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SpliceVarDB</title>
-        <link rel="stylesheet" href="splicevardb/static/css/home.css">
-        <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
+        <!-- <link rel="stylesheet" href="splicevardb/static/css/home.css"> -->
+        <link rel="stylesheet" href="/static/css/home.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -66,14 +66,14 @@
                         <div class="or"></div>
                         <button id="unpublished" onclick="submitOptions('unpublished','')" class="ui button" type="button">Unpublished</button>
                     </div>
-                    <div class="inline field">
+                    <!-- <div class="inline field">
                         <label>Your Name</label>
                         <input placeholder="Name" name="name" type="text">
                     </div>
                     <div class="inline field">
                         <label>Email</label>
                         <input placeholder="Email" name="email" type="email">
-                    </div>
+                    </div> -->
                     <div class="inline field publication preprint">
                         <label>DOI</label>
                         <input placeholder="DOI" name="DOI" type="text">
@@ -87,16 +87,16 @@
                     <div id="submit_format" class="ui buttons field" style="width: 100%">
                         <input type="hidden" name="form">
                         <input type="hidden" name="template">
-                        <button id="form_submit" onclick="submitOptions('','form')" class="ui cci_green button" type="button">Form Upload</button>
-                        <div class="or"></div>
+                        <!-- <button id="form_submit" onclick="submitOptions('','form')" class="ui cci_green button" type="button">Form Upload</button>
+                        <div class="or"></div> -->
                         <button id="template_submit" onclick="submitOptions('','template')" class="ui button" type="button">Template Upload</button>
                     </div>
-                    <div class="field form">
+                    <!-- <div class="field form">
                         <label>Variant</label>
                         <input placeholder="1-100110484-C-A" name="variant" type="text">
-                    </div>
+                    </div> -->
                 
-                    <div class="inline fields form">
+                    <!-- <div class="inline fields form">
                         <label style="width: auto !important">Genome Build</label>
                         <div class="inline field">
                             <div class="ui radio checkbox checked">
@@ -110,8 +110,8 @@
                                 <label>hg19</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="field form">
+                    </div> -->
+                    <!-- <div class="field form">
                         <label>Method of Validation</label>
                         <select name="method" class="ui dropdown">
                             <option value="">Select Validation Method</option>
@@ -121,8 +121,8 @@
                             <option value="MPRA">Massively Parallel Assay</option>
                             <option value="other">Other</option>
                         </select>
-                    </div>
-                    <div class="field form" style="display: block">
+                    </div> -->
+                    <!-- <div class="field form" style="display: block">
                         <div class="inline field" style="margin: 0">
                             <label style="width: 48% !important; text-align: left;">Metric Name</label>
                             <label style="width: 43% !important; text-align: left;">Metric Value</label>
@@ -147,7 +147,7 @@
                             </div>
                             <div onclick="$('.fields.metric').hide()" data-position="top center" data-tooltip="Remove Metric"><i class="ui icon minus square outline big" style="padding: 0.2em 0"></i></div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="field template">
                         <!-- <label>Template Upload (<a href="splicevardb/splicevardb_upload.template.tsv" download>Get Template</a>)</label> -->
                         <label>Template Upload (<a href="splicevardb_upload.template.tsv" download>Get Template</a>)</label>
@@ -348,6 +348,6 @@
         </div>
     </div>
 </body>
-<script src="splicevardb/static/js/home.js" defer></script>
-<!-- <script src="static/js/home.js" defer></script> -->
+<!-- <script src="splicevardb/static/js/home.js" defer></script> -->
+<script src="static/js/home.js" defer></script>
 </html>
