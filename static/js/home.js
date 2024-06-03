@@ -673,8 +673,10 @@ function proteinPaintLoad() {
 
 async function variantSubmit() {
     const file = $("input[name=templateFile]").prop('files')[0];
+    const additionalFile = $("input[name=suppInfo]").prop('files')[0];
     const formData = new FormData();
     formData.append("template", file);
+    formData.append("template", additionalFile);
     let token = localStorage.getItem("splicevardb_token") ? localStorage.getItem("splicevardb_token") : '';
     const requestOptions = {
         headers: {
