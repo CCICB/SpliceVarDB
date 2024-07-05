@@ -19,7 +19,7 @@ Please note that this repository does not contain information about the variants
 
 ## License
 
-This repository is provided under the AGPLv3 license. See the [LICENSE](LICENSE) file for more details.
+This repository is provided under the AGPLv3 license. See the [LICENSE](LICENSE-AGPLv3.md) file for more details.
 
 ## Contact
 
