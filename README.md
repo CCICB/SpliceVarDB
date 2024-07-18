@@ -1,6 +1,6 @@
 # SpliceVarDB
 
-Welcome to the SpliceVarDB repository!
+Welcome to the SpliceVarDB website repository!
 
 ## Overview
 
@@ -13,9 +13,9 @@ This repository contains the following:
 - **Front-end Code**: The code for the front-end of the [SpliceVarDB website](https://splicevardb.org).
 - **Publication Data**: The data and code used to generate the figures in the paper, located in the `publication_data` folder.
 
-## Variants Information
+## Variant Information
 
-Please note that this repository does not contain information about the variants present in SpliceVarDB. You can download this information directly from the [SpliceVarDB website](https://splicevardb.org).
+Please note that this repository does not contain a database of all the variants held in SpliceVarDB. You can download this information directly from the [SpliceVarDB website](https://splicevardb.org).
 
 ## License
 
