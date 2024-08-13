@@ -1,4 +1,4 @@
-# SpliceVarDB
+# SpliceVarDB <img src="splicevardb.png" align="right" height="120"/>
 
 Welcome to the SpliceVarDB website repository!
 
@@ -23,7 +23,7 @@ This repository is provided under the AGPLv3 license. See the [LICENSE](LICENSE-
 
 ## Contact
 
-For any questions or issues, please contact us through the [SpliceVarDB website](https://splicevardb.org).
+For any questions or issues, please raise them here or contact us through the [SpliceVarDB website](https://splicevardb.org).
 
 ---
 
