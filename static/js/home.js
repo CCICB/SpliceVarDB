@@ -1,5 +1,5 @@
-// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+// const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
@@ -780,8 +780,8 @@ function call_api() {
 
 // Add Search Builder
 async function makeFilter() {
-    $('#DataTables_Table_0_wrapper').prepend('<div id="filters"><button id="filterToggle" class="ui basic button">Launch Custom Filter</button></div>');
-    $('#filterToggle').on('click', async function() {
+    $('#DataTables_Table_0_wrapper').prepend('<div id="filters"><button id="" class="ui basic button">Launch Custom Filter</button></div>');
+
         var allGenes = await getAllGenes();
         var gene_list = allGenes;
         // var gene_list = uniqueGenes[0];
@@ -847,7 +847,7 @@ async function makeFilter() {
         })
 
         $('.ui.dropdown').dropdown();
-    });
+
 };
 
 // Run filters
