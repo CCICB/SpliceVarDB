@@ -1,5 +1,5 @@
-// const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
+// const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
@@ -121,8 +121,6 @@ function logout() {
 function downloadButton() {
     if (localStorage.getItem('splicevardb_token')) {
     	$(".dt-buttons button").addClass("cci_green");
-    } else if (tableCount() < 100) {
-        $(".dt-buttons button").addClass("cci_green");
     } else {
 	    $(".dt-buttons button").removeClass("cci_green");
     }
@@ -908,6 +906,19 @@ async function download() {
     a.remove();
 }
 
+async function downloadAll() {
+    const variantDownload = await downloadVariants({});
+    const tsvData = jsonToTSV(variantDownload);
+    const blob = new Blob([tsvData], { type: 'text/tsv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'splicevardb.download.tsv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
 // Adds passed data into the display table
 function appendData(variants) {
     // clear the table
@@ -921,7 +932,39 @@ function appendData(variants) {
             	filename: 'splicevardb.' + date_tag,
 		        extension: '.tsv',
 		        fieldSeparator: '\t',
-                text: 'Download Variants',
+                text: 'Download Filtered Variants',
+                exportOptions: {
+                    modifier: {
+                        search: 'none'
+                    }
+                },
+                attr: {
+                    id: 'download_some'
+                },
+            	action: async function ( e, dt, node, config ) {
+                    $("#download_some").addClass('loading');
+                    if (localStorage.getItem('splicevardb_token')) {
+			            await download();
+                        $("#download_some").removeClass('loading');
+                    } else {
+                    	$('#Signin').flyout('show');
+                        var awaitTOC = window.setInterval(function(){
+                            if ( !$('#Terms').hasClass("visible") ) {
+                                if (localStorage.getItem('splicevardb_token')) {
+                                    $("#download_some").trigger("click");
+                                }
+                                $("#download_some").removeClass('loading'); 
+                                clearInterval(awaitTOC);
+                            }
+                        },500);
+                    }
+		        }
+            },
+            {
+            	filename: 'splicevardb.' + date_tag,
+		        extension: '.tsv',
+		        fieldSeparator: '\t',
+                text: 'Download All Variants',
                 exportOptions: {
                     modifier: {
                         search: 'none'
@@ -933,7 +976,7 @@ function appendData(variants) {
             	action: async function ( e, dt, node, config ) {
                     $("#download_all").addClass('loading');
                     if (localStorage.getItem('splicevardb_token')) {
-			            await download();
+			            await downloadAll();
                         $("#download_all").removeClass('loading');
                     } else {
                     	$('#Signin').flyout('show');
