@@ -12,6 +12,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
 // Display all variants with basic api call
 // Hide gene-level view on initial load
 $( document ).ready(function() {
@@ -121,10 +122,8 @@ function logout() {
 function downloadButton() {
     if (localStorage.getItem('splicevardb_token')) {
     	$(".dt-buttons button").addClass("cci_green");
-    } else if (tableCount() < 100) {
-        $(".dt-buttons button").addClass("cci_green");
     } else {
-	    $(".dt-buttons button").removeClass("cci_green");
+	$(".dt-buttons button").removeClass("cci_green");
     }
 }
 
@@ -617,6 +616,14 @@ function populateProteinPaint(initial_data) {
     // Runs ProteinPaint if only one gene is left from filtering
     let uniqueGenes = uniqueValues("gene_symbol_list", "filtered");
     
+    var mutationReplace = setInterval(function() {
+ 	if ($('.sja_simpletable').length) {
+	    if ($('.sja_simpletable tr:nth-child(2) td:nth-child(1)').text() == "Mutation") {
+		$('.sja_simpletable tr:nth-child(2) td:nth-child(1)').text('Variant');
+	    }
+	}
+    }, 100); // check every 100ms
+
     if (uniqueGenes[0].length == 1) {
         if ( ($('#lollipop').filter(':hidden')) & ($('#gene_plot .dimmer').filter(':hidden')) ) {
             generateProteinPaint(table_data, uniqueGenes[0][0]);
@@ -635,15 +642,17 @@ function populateProteinPaint(initial_data) {
                 }
             }
         } else {
-            $('#gene_plot').dimmer('hide');
+            clearInterval(mutationReplace);
+	    $('#gene_plot').dimmer('hide');
             $('#gene_plot .dimmer').empty();
             document.getElementById('lollipop').style.display = "none";
             document.getElementById('lollipop_placeholder').style.display = "block";
         }
     } else {
+	clearInterval(mutationReplace);
         $('#gene_plot').dimmer('hide');
         $('#gene_plot .dimmer').empty();
-	    document.getElementById('lollipop').style.display = "none";
+	document.getElementById('lollipop').style.display = "none";
         document.getElementById('lollipop_placeholder').style.display = "block";
     }
     // Recall function every 2 seconds with previous data as a comparison
@@ -861,7 +870,7 @@ function uniqueValues(column, data_type) {
     if (data_type == "filtered") {
         data = fetchTableVariants(column);
     } else {
-	    data = fetchVariants(column);
+	data = fetchVariants(column);
     }
 
     let list = [];
@@ -1094,9 +1103,9 @@ function formatIGV(row) {
     var igvDiv = row.child().find(".variant-visualisation")[0];
     igvDiv.style.minHeight = "300px";
     if ( row.data().classification == "Splice-altering" ) {
-        var color = "rgba(219, 61, 61,0.5)";
+        var color = "rgba(219, 61, 61, 0.5)";
     } else if ( row.data().classification == "Low-frequency" ) {
-        var color = "rgba(160, 32, 240, 0.5)";
+        var color = "rgba(128, 82, 160, 0.5)";
     } else if ( row.data().classification == "Normal" ) {
         var color = "rgba(57, 135, 204, 0.5)";
     } else {
@@ -1149,6 +1158,7 @@ function formatIGV(row) {
 function generateProteinPaint(data, gene) {
     document.getElementById('lollipop_placeholder').style.display = "none";
     $('#lollipop').empty();
+    $('.sja_menu_div').remove();
     if (gene === '') {
         return;
     }
@@ -1170,7 +1180,7 @@ function generateProteinPaint(data, gene) {
                  },
                  L: {
                      label: 'Low-frequency',
-                     color: '#A020F0'
+                     color: '#8052a0'
                  },
                  N: {
                      label: 'Normal',
@@ -1188,6 +1198,12 @@ function generateProteinPaint(data, gene) {
             custom_variants: JSON.parse(JSON.stringify(proteinPaintData)),
         }]
     });
+    var proteinPaintLabelReplace = setInterval(function() {
+        if ($('div.sja_Block_div').length) {
+	    $('div.sja_Block_div div:nth-child(2) svg g:nth-child(1) g:nth-child(4) g:nth-child(2) g:nth-child(3)').remove();
+            clearInterval(proteinPaintLabelReplace);
+	}
+    }, 100); // check every 100ms
 };
 
 function convert_to_protein_paint(snv) {
@@ -1203,7 +1219,7 @@ function convert_to_protein_paint(snv) {
         let classifier = variant.classification.charAt(0).replace("C", "X");
         plot_item = {
             'dt': 1,
-	    // 'mname': variant.hgvs_RefSeq.split(":")[1],
+	    //'mname': variant.hgvs_RefSeq.split(":")[1],
             'gene': variant.gene_symbol_list,
             'chr': "chr" + variant.chr,
             'pos': Number(variant_pos),
