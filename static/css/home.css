@@ -228,15 +228,6 @@ td .columns p {
     min-width: calc(100% - 280px);
 }
 
-.filter label {
-    width: 70px;
-    margin-right: 10px;
-}
-
-.filter .selection.dropdown {
-    min-width: calc(100% - 80px) !important;
-}
-
 .filter .dropdown .menu .item {
     font-style: italic;
 }

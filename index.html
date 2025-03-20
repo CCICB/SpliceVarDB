@@ -12,7 +12,7 @@
 	    <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SpliceVarDB</title>
-        <link rel="stylesheet" href="splicevardb/static/css/home.css">
+        <link rel="stylesheet" href="static/css/home.css">
         <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
@@ -24,8 +24,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-        <link rel="icon" href="src/logo.svg" type="image/svg+xml">
-        <link rel="stylesheet" href="style.css">
+        <link rel="icon" href="../src/logo.svg" type="image/svg+xml">
+        <link rel="stylesheet" href="../style.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
         <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
 	    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
@@ -170,7 +170,7 @@
 	    <div id="Terms" class="ui flyout five wide left" style="overflow-y: auto">
             <div class="ui center aligned header">SpliceVarDB Terms of Use</div>
             <div class="content">
-                <h3 class="ui header" style="font-weight: 300; text-align: justify;">We allow browsing of the data in SpliceVarDB by any commercial or non-commercial user, and the downloading of fewer than 100 variants for free, anonymously. We request information from the user to download more than 100 variants and make this data available under a CC BY-NC license.</h3>
+                <h3 class="ui header" style="font-weight: 300; text-align: justify;">We allow browsing of the data in SpliceVarDB by any commercial or non-commercial user. Downloading the SpliceVarDB annotations requires registration. This data is free for research use in an academic setting with a CC BY-NC license, requires a fee-free license in a private or public diagnostic laboratory, and requires a commercial license in a commercial setting.</h3>
 		        <h3 class="ui header" style="font-weight: 300;">The terms of a CC BY-NC license are as follows:</h3>
 		        <div class="terms">
 		            <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
@@ -178,7 +178,7 @@
                 </div>
 		        <div class="terms">
 		            <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
-		            <p style="text-align: justify;"><b>NonCommercial</b> - Under this license, you may not use the material for commercial purposes. We can arrange an alternative license for commercial purposes, please contact A/Prof. Mark Cowley (<a href="mailto:mcowley@ccia.org.au">mcowley@ccia.org.au</a>).</p>
+			    <p style="text-align: justify;"><b>NonCommercial</b> - Under this license, you may not use the material for commercial purposes. We can arrange an alternative license for commercial purposes, the terms of which can be found <a href="commercialEULA.pdf">here</a>. For additional information please contact A/Prof. Mark Cowley (<a href="mailto:mcowley@ccia.org.au">mcowley@ccia.org.au</a>).</p>
 		        </div>
 	        </div>
 	        <div class="center aligned actions">
@@ -216,7 +216,13 @@
                         <input placeholder="Role" name="role" type="text">
                     </div>
                     <div class="field" id='commercial_purpose' hidden>
-                        <label>Reasons for Registering*</label>
+                        <label>Company Size*</label>
+                        <select name="size" class="ui dropdown" id="company_size">
+                            <option value="250+">More than 250 employees</option>
+                            <option value="50-249">50-249 employees</option>
+                            <option value="1-49">Up to 49 employees</option>
+                        </select>
+			<label>Reasons for Registering*</label>
                         <textarea placeholder="The reasons for accessing SpliceVarDB" name="purpose_commercial" type="text"></textarea>
                     </div>
   		            <div class="field" id='purpose'>
@@ -299,7 +305,7 @@
 	    <div class="ui borderless main menu sticky">
             <div class="ui nav container">
 		        <div class="header"><a class="item">
-           	        <img style="height: 40px; width: 40px;" class="logo" src="src/splicevardb.png">
+           	        <img style="height: 40px; width: 40px;" class="logo" src="../src/splicevardb.png">
 		            <b>SpliceVarDB</b></a>
 		        </div>
                 <a id="TOU_pull" class="item">Register</a>
@@ -348,6 +354,6 @@
         </div>
     </div>
 </body>
-<script src="splicevardb/static/js/home.js" defer></script>
+<script src="static/js/home.js" defer></script>
 <!-- <script src="static/js/home.js" defer></script> -->
 </html>
