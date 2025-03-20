@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+	    <!-- Google tag (gtag.js) -->
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7K1DTE7VH"></script>
+	    <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S7K1DTE7VH');
+        </script>
+	    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SpliceVarDB</title>
+        <link rel="stylesheet" href="../static/css/home.css">
+        <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/igv@2.15.10/dist/igv.min.js"></script>
+        <script src="https://proteinpaint.stjude.org/bin/proteinpaint.js" charset="utf-8"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+        <link rel="icon" href="../../src/logo.svg" type="image/svg+xml">
+        <link rel="stylesheet" href="../../style.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+	    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script> -->
+    </head>
+    <body>
+        <div id="Submit" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">SpliceVarDB Variant Upload</div>
+            <div class="content">
+                <h3 class="ui header" style="font-weight: 300; text-align: justify;">Users can submit published or unpublished variants experimentally validated splice-altering variants. These variants will be incorporated into SpliceVarDB following manual review.</h3>
+                <h3 class="ui header" style="font-weight: 300;"></h3>
+                <div class="terms vertical-center">
+		            <div style="width: 100px"><i class="ui huge icon file alternate outline"></i></div>
+		            <p style="text-align: justify;"><b>Published</b> - Please submit any papers that you find with experimentally validated splice-altering variants. We ask if the submitter was involved in the publication, but it is not a requirement.</p>
+                </div>
+                <div class="terms vertical-center">
+                    <div style="width: 100px"><i class="ui huge icon edit outline"></i></div>
+                    <p style="text-align: justify;"><b>Preprint</b> - We happily accept preprinted results, pending the availability of the experimental validation results in the manuscript. When the preprint is published, we can appropritately adjust the attribution.</p>
+                </div>
+		        <div class="terms vertical-center">
+                    <div style="width: 100px"><i class="ui huge icon share square"></i></div>
+                    <p style="text-align: justify;"><b>Unpublished</b> - We accept results for unpublished variants with the supply of additional supporting evidence. We ask that the submitter be involved in the generation of results or the request for validation. If the variant is published in the future, please let us know and we can appropritately adjust the attribution.</p>
+                </div>
+		        <h3 class="ui header" style="font-weight: 300;">We ask that you upload variants via the form below. For bulk variant uploads, a template has been provided. If you are having difficulties, please email Patricia Sullivan at <a href="mailto(psullivan@ccia.org.au)">psullivan@ccia.org.au</a>.</h3>
+
+            </div>
+            <div class="center aligned actions">
+                <form class="ui form segment" onsubmit="variantSubmit();return false">
+                    <p>Submit Validated Splice-altering Variants</p>
+                    <div class="ui error message"></div>
+                    <div id="submit_source" class="ui buttons field" style="width: 100%">
+                        <input type="hidden" name="published">
+                        <input type="hidden" name="preprint">
+                        <input type="hidden" name="unpublished">
+                        <button id="published" onclick="submitOptions('published','')" class="ui cci_green button" type="button">Published</button>
+                        <div class="or"></div>
+                        <button id="preprint" onclick="submitOptions('preprint','')" class="ui button" type="button">Preprint</button>
+                        <div class="or"></div>
+                        <button id="unpublished" onclick="submitOptions('unpublished','')" class="ui button" type="button">Unpublished</button>
+                    </div>
+                    <!-- <div class="inline field">
+                        <label>Your Name</label>
+                        <input placeholder="Name" name="name" type="text">
+                    </div>
+                    <div class="inline field">
+                        <label>Email</label>
+                        <input placeholder="Email" name="email" type="email">
+                    </div> -->
+                    <div class="inline field publication preprint">
+                        <label>DOI</label>
+                        <input placeholder="DOI" name="DOI" type="text">
+                    </div>
+                    <div class="inline field unpublished">
+                        <div class="ui checkbox">
+                            <input type="checkbox" name="involved">
+                            <label>I was involved with this study</label>
+                        </div>
+                    </div>
+                    <div id="submit_format" class="ui buttons field" style="width: 100%">
+                        <input type="hidden" name="form">
+                        <input type="hidden" name="template">
+                        <!-- <button id="form_submit" onclick="submitOptions('','form')" class="ui cci_green button" type="button">Form Upload</button>
+                        <div class="or"></div> -->
+                        <button id="template_submit" onclick="submitOptions('','template')" class="ui button" type="button">Template Upload</button>
+                    </div>
+                    <!-- <div class="field form">
+                        <label>Variant</label>
+                        <input placeholder="1-100110484-C-A" name="variant" type="text">
+                    </div> -->
+                
+                    <!-- <div class="inline fields form">
+                        <label style="width: auto !important">Genome Build</label>
+                        <div class="inline field">
+                            <div class="ui radio checkbox checked">
+                                <input type="radio" name="genomeBuild" checked="" tabindex="0" class="hidden">
+                                <label>hg38</label>
+                            </div>
+                        </div>
+                        <div class="inline field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="genomeBuild" tabindex="0" class="hidden">
+                                <label>hg19</label>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- <div class="field form">
+                        <label>Method of Validation</label>
+                        <select name="method" class="ui dropdown">
+                            <option value="">Select Validation Method</option>
+                            <option value="RNA-Seq">RNA-Seq</option>
+                            <option value="Minigene Assay">Minigene Assay</option>
+                            <option value="RT-PCR">RT-PCR</option>
+                            <option value="MPRA">Massively Parallel Assay</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div> -->
+                    <!-- <div class="field form" style="display: block">
+                        <div class="inline field" style="margin: 0">
+                            <label style="width: 48% !important; text-align: left;">Metric Name</label>
+                            <label style="width: 43% !important; text-align: left;">Metric Value</label>
+                        </div>
+                        <div class="fields">
+                            <p style="font-size: 1em; margin: auto 0;">1</p>
+                            <div class="eight wide field">
+                                <input name="metric_name" type="text">
+                            </div>
+                            <div class="six wide field">
+                                <input name="metric_value" type="text">
+                            </div>
+                            <div onclick="$('.fields.metric').show()" data-position="top center" data-tooltip="Add Metric"><i class="ui icon plus square outline big" style="padding: 0.2em 0"></i></div>
+                        </div>
+                        <div class="fields metric" style="display:none;">
+                            <p style="font-size: 1em; margin: auto 0;" >2</p>
+                            <div class="eight wide field">
+                                <input name="metric_name" type="text">
+                            </div>
+                            <div class="six wide field">
+                                <input name="metric_value" type="text">
+                            </div>
+                            <div onclick="$('.fields.metric').hide()" data-position="top center" data-tooltip="Remove Metric"><i class="ui icon minus square outline big" style="padding: 0.2em 0"></i></div>
+                        </div>
+                    </div> -->
+                    <div class="field template">
+                        <!-- <label>Template Upload (<a href="splicevardb/splicevardb_upload.template.tsv" download>Get Template</a>)</label> -->
+                        <label>Template Upload (<a href="splicevardb_upload.template.tsv" download>Get Template</a>)</label>
+                        <div class="ui file input">
+                            <input type="file" name="templateFile">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Supporting Information</label>
+                        <div class="ui file input">
+                            <input type="file" name="suppInfo">
+                        </div>
+                    </div>
+                
+                    <div class="ui negative basic button">Cancel</div>
+                    <div class="ui cci_green submit button">Submit</div>
+                </form>
+            </div>
+	    </div>
+	    <div id="Terms" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">SpliceVarDB Terms of Use</div>
+            <div class="content">
+                <h3 class="ui header" style="font-weight: 300; text-align: justify;">We allow browsing of the data in SpliceVarDB by any commercial or non-commercial user. Downloading the SpliceVarDB annotations requires registration. This data is free for research use in an academic setting with a CC BY-NC license, requires a fee-free license in a private or public diagnostic laboratory, and requires a commercial license in a commercial setting.</h3>
+		        <h3 class="ui header" style="font-weight: 300;">The terms of a CC BY-NC license are as follows:</h3>
+		        <div class="terms">
+		            <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+		            <p style="text-align: justify;"><b>Attribution</b> - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+                </div>
+		        <div class="terms">
+		            <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+			    <p style="text-align: justify;"><b>NonCommercial</b> - Under this license, you may not use the material for commercial purposes. We can arrange an alternative license for commercial purposes, the terms of which can be found <a href="commercialEULA.pdf">here</a>. For additional information please contact A/Prof. Mark Cowley (<a href="mailto:mcowley@ccia.org.au">mcowley@ccia.org.au</a>).</p>
+		        </div>
+	        </div>
+	        <div class="center aligned actions">
+   	            <form class="ui form segment" method="post" action="https://compbio.ccia.org.au/splicevardb/contact.php">
+		            <p>New User Registration</p>
+    		        <div class="ui error message"></div>
+		            <div class="field">
+                        <label>Name*</label>
+                        <input placeholder="Name" name="name" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Email*</label>
+                        <input placeholder="Email" name="email" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Password*</label>
+                        <input placeholder="Password" name="password" type="password">
+                    </div>
+		            <div class="field">
+                        <label>Affiliation*</label>
+                        <input placeholder="Affiliation" name="affiliation" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Organisation type*</label>
+                        <select name="field" class="ui dropdown" id="field_select">
+                            <option value="">Select type</option>
+                            <option value="academic">Academic</option>
+                            <option value="diagnostic lab">Diagnostic lab</option>
+                            <option value="non-profit">Not-for-profit</option>
+                            <option value="commercial">Commercial</option>
+                        </select>
+                    </div>
+		            <div class="field">
+                        <label>Role</label>
+                        <input placeholder="Role" name="role" type="text">
+                    </div>
+                    <div class="field" id='commercial_purpose' hidden>
+                        <label>Company Size*</label>
+                        <select name="size" class="ui dropdown" id="company_size">
+                            <option value="250+">More than 250 employees</option>
+                            <option value="50-249">50-249 employees</option>
+                            <option value="1-49">Up to 49 employees</option>
+                        </select>
+			<label>Reasons for Registering*</label>
+                        <textarea placeholder="The reasons for accessing SpliceVarDB" name="purpose_commercial" type="text"></textarea>
+                    </div>
+  		            <div class="field" id='purpose'>
+                        <label>Reasons for Registering*</label>
+                        <select name="purpose" multiple="" class="ui dropdown">
+                            <option value="">Select Purpose</option>
+                            <option value="curation">Variant Curation</option>
+                            <option value="gene">Gene(s) of Interest</option>
+                            <option value="therapeutics">Therapeutic Targets</option>
+                            <option value="benchmarking"><i>In silico</i> Benchmarking</option>
+                            <option value="development"><i>In silico</i> Development</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="inline field">
+                        <div class="ui checkbox" id="spliceai_form">
+                            <input type="checkbox" name="spliceai" id="spliceai_checkbox">
+                            <label>
+                                <div 
+                                    class="item" 
+                                    id="spliceai_terms"
+                                    data-html="
+                                        <p>SpliceVarDB fetches SpliceAI scores for each variant, which requires that you have a valid License</p>
+                                        <p>By ticking this box, you confirm that you have a valid License to use these scores.</p>
+                                        <p>If you do not tick the box, then you can still use SplicevarDB, you just won't see these scores.</p>
+                                    "
+                                >
+                                    I have <u><a href="https://github.com/Illumina/SpliceAI?tab=readme-ov-file#license" target="_blank">permission</a></u> to view SpliceAI scores
+                            </div>
+                            </label>
+                        </div>
+                    </div>
+		            <div class="inline field">
+    		            <div class="ui checkbox">
+      			            <input type="checkbox" name="terms">
+      			            <label>I agree to the terms and conditions*</label>
+    		            </div>
+  		            </div>
+                
+		            <div class="ui negative button">Cancel</div>
+                    <div class="ui cci_green submit button" id="register_button" onclick="termsSubmit()">Register</div>
+                    <div class="ui cci_green submit button" id="request_button" onclick="emailRequest()">Submit Request</div>
+                    <input type="submit" name="submit" value="Send" class="ui button submit" id="secret_tunnel">
+	            </form>
+	        </div>
+        </div>  
+        <div id="Signin" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">Sign in</div>
+	            <div id="login_form" class="center aligned actions">
+                    <form class="ui form segment" onsubmit="loginSubmit();return false">
+                        <div class="ui error message"></div>
+                        <div class="field">
+                            <label>Email</label>
+                            <input placeholder="Email" name="email" type="text">
+                        </div>
+                        <div class="field">
+                            <label>Password</label>
+                            <input placeholder="Password" name="password" type="password">
+                        </div>
+                        <div class="ui negative button">Cancel</div>
+                        <div class="ui cci_green submit button">Sign in</div>
+                        <p>Don't have an account? Register <a onclick="
+                            $('#Signin').flyout('hide');$('#Terms').flyout('show');
+                        ">here</a></p>
+                    </form>
+	            </div>
+                <div id="welcome_message" class="center aligned actions" hidden>
+                    <p id="welcome_name"></p>
+                    <p id="welcome_token_expiry"></p>
+                    <div class="ui fluid input">
+                        <input id="welcome_token" type="text" readonly>
+                    </div>
+                    <button class="ui compact labeled icon button" id="welcome_token_refresh" onclick="refreshToken()">
+                        <i class="redo icon"></i> Refresh token
+                    </button>
+                    <div class="ui button" onclick="logout()">Log out</div>
+                </div>
+        </div>  
+	    <div class="overflowing pusher">
+	    <div class="ui borderless main menu sticky">
+            <div class="ui nav container">
+		        <div class="header"><a class="item">
+           	        <img style="height: 40px; width: 40px;" class="logo" src="../../src/splicevardb.png">
+		            <b>SpliceVarDB</b></a>
+		        </div>
+                <a id="TOU_pull" class="item">Register</a>
+                <a id="Login_pull" class="item">Sign in</a>
+                <a href="https://compbio.ccia.org.au/splicevardb-api/doc/" target="_blank" class="item">API</a>
+                <a id="Submit_pull" class="item">Submit Variants</a>
+                <a class="item" href="https://doi.org/10.1016/j.ajhg.2024.08.002" target="_blank">Publication</a>
+                <a href="https://compbio.ccia.org.au" target="_blank" class="item">Lab Home</a>
+            </div>
+    	</div>
+	
+        <div class="ui container content">
+            <h1 class="ui header">SpliceVarDB Resources</h1>
+	    <p>We would like to acknowledge and thank the developers of the open-source software and visualisation tools that have been utilised in the creation of this website. These tools, integral to the functionality and visual appeal of the platform, are provided to you under the terms of their respective open-source software licenses.</p>
+	    <div class="ui grid" style="margin-top: 20px;">
+	    <div class="ui column five wide">
+	    	<h2 class="ui header">Annotation</h2>
+	    	<p>MyVariant</p>
+	    	<p>SpliceAI Lookup</p>
+	    	<p>ClinVar</p>
+	    	<p>VEP</p>
+	    	<p>gnomAD</p>
+	    	<p>SpliceAI</p>
+	    	<p>Pangolin</p>
+	    </div>
+	    <div class="ui column five wide">
+	    	<h2 class="ui header">Backend</h2>
+	    	<p>nginx</p>
+	    	<p>gUnicorn</p>
+	    	<p>DataTables</p>
+	    	<p>Swagger</p>
+	    </div>
+	    <div class="ui column five wide">
+		<h2 class="ui header">Visualisation</h2>
+	    	<p>ProteinPaint</p>
+	    	<p>IGV</p>
+	    	<p>SemanticUI</p>
+	    </div>
+	</div></div>
+    </div>
+</body>
+<script src="../static/js/home.js" defer></script>
+<!-- <script src="static/js/home.js" defer></script> -->
+</html>
