@@ -12,7 +12,7 @@
 	    <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SpliceVarDB</title>
-        <link rel="stylesheet" href="static/css/home.css">
+        <link rel="stylesheet" href="../static/css/home.css">
         <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
@@ -24,8 +24,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-        <link rel="icon" href="../src/logo.svg" type="image/svg+xml">
-        <link rel="stylesheet" href="../style.css">
+        <link rel="icon" href="../../src/logo.svg" type="image/svg+xml">
+        <link rel="stylesheet" href="../../style.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
         <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
 	    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
@@ -305,7 +305,7 @@
 	    <div class="ui borderless main menu sticky">
             <div class="ui nav container">
 		        <div class="header"><a class="item">
-           	        <img style="height: 40px; width: 40px;" class="logo" src="static/images/splicevardb.png">
+           	        <img style="height: 40px; width: 40px;" class="logo" src="../../src/splicevardb.png">
 		            <b>SpliceVarDB</b></a>
 		        </div>
                 <a id="TOU_pull" class="item">Register</a>
@@ -318,42 +318,35 @@
     	</div>
 	
         <div class="ui container content">
-            <div style="position: relative">
-                <h1 class="ui header" style="margin: 0 !important">SpliceVarDB</h1>
-		        <div id="buildToggle_buttons" class="ui buttons" style="display: none; position: absolute; right: 0; top: 0;" >
-                    <button id="hg38_toggle" onclick="buildToggle('hg38')" class="ui button">hg38</button>
-                    <div class="or"></div>
-                    <button id="hg19_toggle" onclick="buildToggle('hg19')" class="ui button">hg19</button>
-		        </div>
-            </div>
-            <div id="gene_plot" class="ui raised segment" style="padding: 0 !important; min-height: 100px;">
-                <span id="lollipop_placeholder" style="margin: 40px 0">– Lollipop gene plot will display when only one gene is returned –</span>
-                <div id="lollipop">
-                </div>
-            </div>
-
-            <div class="ui container raised segment variants" id="results">
-                <table class="ui table hover">
-                    <thead>
-                        <tr id="table-head">
-                            <th>+</th>
-                            <th>Variant (hg38)</th>
-			                <th>Variant (hg19)</th>
-                            <th>Gene</th>
-                            <th>HGVS</th>
-                            <th>Validation</th>
-                            <th>Classification</th>
-			                <th>Location</th>
-                        </tr>
-                    </thead>
-                    <tbody id="displayVariants">
-                    </tbody>
-                </table>
-                <div class="error"></div>
-            </div>
-        </div>
+            <h1 class="ui header">SpliceVarDB Resources</h1>
+	    <p>We would like to acknowledge and thank the developers of the open-source software and visualisation tools that have been utilised in the creation of this website. These tools, integral to the functionality and visual appeal of the platform, are provided to you under the terms of their respective open-source software licenses.</p>
+	    <div class="ui grid" style="margin-top: 20px;">
+	    <div class="ui column five wide">
+	    	<h2 class="ui header">Annotation</h2>
+	    	<p>MyVariant</p>
+	    	<p>SpliceAI Lookup</p>
+	    	<p>ClinVar</p>
+	    	<p>VEP</p>
+	    	<p>gnomAD</p>
+	    	<p>SpliceAI</p>
+	    	<p>Pangolin</p>
+	    </div>
+	    <div class="ui column five wide">
+	    	<h2 class="ui header">Backend</h2>
+	    	<p>nginx</p>
+	    	<p>gUnicorn</p>
+	    	<p>DataTables</p>
+	    	<p>Swagger</p>
+	    </div>
+	    <div class="ui column five wide">
+		<h2 class="ui header">Visualisation</h2>
+	    	<p>ProteinPaint</p>
+	    	<p>IGV</p>
+	    	<p>SemanticUI</p>
+	    </div>
+	</div></div>
     </div>
 </body>
-<!-- <script src="splicevardb/static/js/home.js" defer></script> -->
-<script src="static/js/home.js" defer></script>
+<script src="../static/js/home.js" defer></script>
+<!-- <script src="static/js/home.js" defer></script> -->
 </html>

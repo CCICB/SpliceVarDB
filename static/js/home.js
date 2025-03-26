@@ -16,7 +16,12 @@ function sleep(ms) {
 // Display all variants with basic api call
 // Hide gene-level view on initial load
 $( document ).ready(function() {
-    call_api();
+    // alert("We are in the middle of fixing an issue related to returning variants. Please check back later if no variants are being shown!");
+    // Get the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const variantId = urlParams.get("variant_id");
+ 
+    call_api(variantId ? {variant_id: variantId} : {gene: ['COL4A5']})
 
     $('#spliceai_form #spliceai_terms').popup({ on: 'hover'});
     // $('#spliceai_form, #spliceai_terms').hover(
@@ -475,7 +480,11 @@ $('#Terms form')
           {
             type   : 'empty',
             prompt : 'Please enter your email'
-          }
+          },
+	  {
+  	    type   : 'doesntContain[medgenome]',
+	    prompt : 'Registrations from this company are blocked'
+	  }
         ]
       },
       password: {
@@ -766,10 +775,8 @@ downloadVariants = async (payload, token) =>
     makeRequest(`${splicevardbAPI}/variants/download`, 'POST', payload)
 
 // Basic API call
-function call_api() {
-    makeRequest(`${splicevardbAPI}/variants/filter`, 'POST', {
-        gene: ['COL4A5']
-    })
+function call_api(params={gene:['COL4A5']}) {
+    makeRequest(`${splicevardbAPI}/variants/filter`, 'POST', params)
     .then(function (data) {
         appendData(data.data);
     })
