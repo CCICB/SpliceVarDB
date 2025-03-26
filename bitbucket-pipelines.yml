@@ -1,0 +1,37 @@
+image: atlassian/default-image:4
+
+pipelines:
+  tags:
+    release-v*:
+      - stage:
+          name: Build, Test, Deploy
+          deployment: production
+          steps:
+            - step:
+                name: "Copy and Deploy to Production"
+                runs-on:
+                  - "self.hosted"
+                  - "linux"
+                script:
+                  # Create TARGET_FOLDER
+                  - pipe: atlassian/ssh-run:0.8.1
+                    variables:
+                      SSH_USER: $SSH_USER
+                      SERVER: $SSH_SERVER
+                      COMMAND: |
+                        mkdir -p ${TARGET_FOLDER}
+                  # Create known_hosts for scp to work
+                  - mkdir -p ~/.ssh
+                  - ssh-keyscan $SSH_SERVER >> ~/.ssh/known_hosts
+                  - scp -r ./* $SSH_USER@$SSH_SERVER:$TARGET_FOLDER
+                  # Run docker compose
+                  - pipe: atlassian/ssh-run:0.8.1
+                    variables:
+                      SSH_USER: $SSH_USER
+                      SERVER: $SSH_SERVER
+                      COMMAND: |
+                        cd ${TARGET_FOLDER}
+                        DOPPLER_TOKEN=${DOPPLER_TOKEN} docker compose up -d --build
+                        docker ps
+                        cd ~
+                        rm -rf ${TARGET_FOLDER}
