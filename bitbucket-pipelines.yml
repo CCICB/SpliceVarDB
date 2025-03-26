@@ -1,8 +1,8 @@
 image: atlassian/default-image:4
 
 pipelines:
-  branches:
-    CW-10-pipelines:
+  tags:
+    release-v*:
       - stage:
           name: Build, Test, Deploy
           deployment: production
