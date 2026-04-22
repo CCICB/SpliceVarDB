@@ -1,5 +1,5 @@
 // const splicevardbAPI = 'http://127.0.0.1:5000/splicevardb-api'
-const splicevardbAPI = 'https://compbio.ccia.org.au/splicevardb-api'
+const splicevardbAPI = '/splicevardb-api'
 
 let TOU = false;
 let genome_build = "hg38";
@@ -20,7 +20,17 @@ $( document ).ready(function() {
     // Get the current URL
     const urlParams = new URLSearchParams(window.location.search);
     const variantId = urlParams.get("variant_id");
- 
+    const resetToken = urlParams.get("reset_token");
+
+    // If the URL contains a password reset token, open the reset flyout.
+    // Deferred to next tick so Fomantic UI initialises flyout context first,
+    // otherwise the component renders twice.
+    if (resetToken) {
+        $('#ResetPassword input[name="reset_token"]').val(resetToken);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => $('#ResetPassword').flyout('show'), 0);
+    }
+
     call_api(variantId ? {variant_id: variantId} : {gene: ['COL4A5']})
 
     $('#spliceai_form #spliceai_terms').popup({ on: 'hover'});
@@ -370,7 +380,7 @@ async function loginSubmit() {
 	    var values = $form.form('get values')
         const result = await login({
             email: values.email,
-            password: values.password
+            password: btoa(values.password)
         })
         if (result.token && result.name) {
             const token = result.token;
@@ -422,7 +432,7 @@ async function termsSubmit() {
         const result = await register({
             name: values.name,
             email: values.email,
-            password: values.password,
+            password: btoa(values.password),
             affiliation: values.affiliation,
             field: values.field,
             purpose: values.purpose,
@@ -461,6 +471,68 @@ function emailRequest() {
         $('#secret_tunnel').trigger('click');
     }
 }
+
+async function forgotPasswordSubmit() {
+    if ($('#ForgotPassword form').form('is valid')) {
+        const $btn = $('#ForgotPassword form .submit.button');
+        $btn.addClass('loading disabled');
+        $('#forgot_success').hide();
+        $('#ForgotPassword .ui.error.message').hide();
+        const values = $('#ForgotPassword form').form('get values');
+        try {
+            const { data, ok } = await forgotPassword({ email: values.email });
+            if (ok) {
+                $('#ForgotPassword form input[name="email"]').val('');
+                $('#forgot_success').show();
+            } else {
+                $('#ForgotPassword form').form('add errors', [data.message || 'Something went wrong. Please try again.']);
+            }
+        } finally {
+            $btn.removeClass('loading disabled');
+        }
+    }
+}
+
+async function resetPasswordSubmit() {
+    const $form = $('#ResetPassword form');
+    if ($form.form('is valid')) {
+        const values = $form.form('get values');
+        if (values.password !== values.confirm_password) {
+            $form.form('add errors', ['Passwords do not match.']);
+            return;
+        }
+        const $btn = $form.find('.submit.button');
+        $btn.addClass('loading disabled');
+        try {
+            const result = await resetPassword({
+                token: values.reset_token,
+                password: btoa(values.password)
+            });
+            if (result.message && !result.message.toLowerCase().includes('fail') &&
+                !result.message.toLowerCase().includes('invalid') &&
+                !result.message.toLowerCase().includes('expired')) {
+                $form.find('.field, .button').hide();
+                $('#reset_success').show();
+            } else {
+                $form.form('add errors', [result.message || 'Reset failed. Please try again.']);
+            }
+        } finally {
+            $btn.removeClass('loading disabled');
+        }
+    }
+}
+
+forgotPassword = async (values) => {
+    const res = await fetch(`${splicevardbAPI}/user/forgot_password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+    });
+    return { data: await res.json(), ok: res.ok };
+};
+
+resetPassword = async (values) =>
+    makeRequest(`${splicevardbAPI}/user/reset_password`, 'POST', values);
 
 $('#Terms form')
   .form({
@@ -546,6 +618,55 @@ $('#Signin form')
                 }
             ]
         },
+    })
+;
+
+$('#ForgotPassword form')
+    .form({
+        fields: {
+            email: {
+                identifier: 'email',
+                rules: [
+                    {
+                        type  : 'empty',
+                        prompt: 'Please enter your email address'
+                    },
+                    {
+                        type  : 'email',
+                        prompt: 'Please enter a valid email address'
+                    }
+                ]
+            }
+        }
+    })
+;
+
+$('#ResetPassword form')
+    .form({
+        fields: {
+            password: {
+                identifier: 'password',
+                rules: [
+                    {
+                        type  : 'empty',
+                        prompt: 'Please enter a new password'
+                    },
+                    {
+                        type  : 'minLength[8]',
+                        prompt: 'Password must be at least 8 characters'
+                    }
+                ]
+            },
+            confirm_password: {
+                identifier: 'confirm_password',
+                rules: [
+                    {
+                        type  : 'empty',
+                        prompt: 'Please confirm your new password'
+                    }
+                ]
+            }
+        }
     })
 ;
     

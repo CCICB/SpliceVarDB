@@ -268,6 +268,45 @@
 	            </form>
 	        </div>
         </div>  
+        <div id="ForgotPassword" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">Reset Password</div>
+            <div class="center aligned actions">
+                <form class="ui form segment" onsubmit="forgotPasswordSubmit();return false">
+                    <p>Enter your account email address and we will send you a link to reset your password.</p>
+                    <div class="ui error message"></div>
+                    <div class="ui success message" id="forgot_success" hidden>
+                        <p>If that email is registered you will receive a reset link shortly.</p>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input placeholder="Email" name="email" type="text">
+                    </div>
+                    <div class="ui negative button" onclick="$('#ForgotPassword').flyout('hide');$('#Signin').flyout('show')">Back</div>
+                    <div class="ui cci_green submit button">Send Reset Link</div>
+                </form>
+            </div>
+        </div>
+        <div id="ResetPassword" class="ui flyout five wide left" style="overflow-y: auto; top: 0px">
+            <div class="ui center aligned header">Choose New Password</div>
+            <div class="center aligned actions">
+                <form class="ui form segment" onsubmit="resetPasswordSubmit();return false">
+                    <div class="ui error message"></div>
+                    <div class="ui success message" id="reset_success" hidden>
+                        <p>Password updated successfully. You can now <a onclick="$('#ResetPassword').flyout('hide');$('#Signin').flyout('show')">sign in</a>.</p>
+                    </div>
+                    <input type="hidden" name="reset_token">
+                    <div class="field">
+                        <label>New Password</label>
+                        <input placeholder="New password" name="password" type="password">
+                    </div>
+                    <div class="field">
+                        <label>Confirm New Password</label>
+                        <input placeholder="Confirm new password" name="confirm_password" type="password">
+                    </div>
+                    <div class="ui cci_green submit button">Set New Password</div>
+                </form>
+            </div>
+        </div>
         <div id="Signin" class="ui flyout five wide left" style="overflow-y: auto">
             <div class="ui center aligned header">Sign in</div>
 	            <div id="login_form" class="center aligned actions">
@@ -286,6 +325,7 @@
                         <p>Don't have an account? Register <a onclick="
                             $('#Signin').flyout('hide');$('#Terms').flyout('show');
                         ">here</a></p>
+                        <p><a onclick="$('#Signin').flyout('hide');$('#ForgotPassword').flyout('show')">Forgot your password?</a></p>
                     </form>
 	            </div>
                 <div id="welcome_message" class="center aligned actions" hidden>
