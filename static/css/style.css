@@ -1,0 +1,456 @@
+a {
+    cursor: pointer;
+}
+
+/* Header settings */
+.banner {
+    height: 400px;
+    background-position: center;
+}
+
+.banner div {
+    padding-top: 160px;
+}
+
+.banner .header {
+    color: white!important;
+    margin: 10px;
+}
+
+.ui.nav.container {
+    font-size: 1.2em;
+}
+
+.ui.sticky {
+    margin-top: 0!important;
+}
+
+/* Page definitions */
+p, li, th, td {
+    font-size: medium;
+    line-height: 1.5em;
+}
+
+.ui.container h1 {
+    margin-top: 30px!important;
+}
+
+#quote {
+    background: linear-gradient(225deg, hsla(157, 100%, 29%, 1) 0%, hsla(157, 100%, 29%, 1) 62%, hsla(174, 100%, 17%, 1) 100%);
+    width: 100%;
+    padding: 20px;
+}
+
+.polaroid {
+    margin: 20px;
+    background-color: white;
+    width: 200px;
+    height: 270px;
+    margin: 20px!important;
+    transform: rotate(1deg);
+}
+
+.polaroid p {
+    margin: 0;
+}
+
+.quote.text {
+    padding: 10px 20px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+}
+
+.quote.text i {
+    font-size: 2rem;
+    opacity: 90%;
+    position: absolute;
+}
+
+blockquote {
+    font-size: 1.5rem;
+    font-style: italic;
+    line-height: 2.5rem;
+    text-align: justify;
+}
+
+/* Research Buttons */
+
+#research_buttons {
+    text-align: center;
+    position: relative;
+    height: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+#research_buttons .button {
+    border-radius: 0!important;
+    margin-bottom: 1px!important;
+}
+
+#research_buttons .button.active {
+    color: #00965c!important;
+    background-color: white!important;
+}
+
+.button.content {
+    height: 100px;
+    position: relative;
+    margin: auto;
+}
+
+.button.content i {
+    position: relative;
+    top: 30px;
+    font-size: xxx-large;
+}
+
+.button.content h3 {
+    margin-top: 0;
+    position: relative;
+    bottom: -20px;
+}
+
+.research.content {
+    text-align: center;
+    padding: 10px;
+}
+
+.research.content h2 {
+    padding-top: 10px;
+    font-size: xxx-large!important;
+    text-transform: lowercase;
+    font-style: italic;
+    margin-bottom: 0px;
+}
+
+.research.content h3 {
+    margin: 0 0 30px 0;
+}
+
+.research.content h4 {
+    margin: 20px 0 0 0;
+}
+
+.research.content .list {
+    margin: auto;
+    width: 70%;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 30px;
+    background: #00965c40;
+    margin-bottom: 20px;
+    font-size: medium;
+}
+
+.research.content .list:hover {
+    color: white;
+    background: #00965c;
+}
+
+.research.content .entry a {
+    color: inherit;
+}
+
+.entry div {
+    margin-bottom: 5px !important;
+}
+
+.entry i {
+    font-size: xx-large !important;
+    margin: 0 20px 0 0 !important;
+    position: relative;
+    top: 70%;
+    transform: translateY(-50%);
+    color:#00965c;
+}
+
+/* GitHub */
+
+.repo {
+    padding: 0.5em 0 0 0 !important;
+}
+.repo, .repo h3, .repo p {
+    margin: 0em !important;
+}
+
+.repo-language-color {
+    height: 15px;
+    width: 15px;
+    border-radius: 10px;
+    border: 1px solid black;
+    display: inline-flex;
+}
+
+.repo a {
+    color: inherit;
+}
+
+.repo span {
+    margin: 10px;
+}
+
+.repo div {
+    margin: 7px 0 3px 0;
+}
+
+.repo .icon {
+    margin: 0 5px;
+    position: relative;
+    top: 2px;
+}
+
+/* Tools */
+.tool.icon {
+    width: 220px;
+    height: 140px;
+    margin: 0 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tool.icon:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+
+.tool.icon img {
+    position: relative;
+    top: 10px;
+}
+
+.tool.icon h4 {
+    position: absolute;
+    bottom: 20px;
+    margin: auto;
+    text-align: center;
+    width: 220px;
+}
+
+.tool.icon p {
+    position: absolute;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    width: 220px;
+}
+
+
+/* CSS for Team Member Tiles */
+#members {
+    margin: auto;
+}
+
+.team-member {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 10px 0px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 250px;
+    min-width: min-content;
+}
+
+.team-divider {
+    margin: 10px 0px;
+    padding: 0px !important;
+}
+
+.team-divider-label {
+    background-color: lightgrey;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    width: 50%;
+    float: right;
+    align-content: center;
+}
+
+.team-divider-label .rotate {
+    transform: rotate(-90deg);
+}
+
+.team-divider-label .rotate {
+    width: 250px;
+    position: relative;
+    left: -80px;
+    text-align: center;
+}
+
+.team-member img {
+    width: 150px; /* Adjust image size as needed */
+    height: 150px;
+    border-radius: 50%; /* Rounded image */
+    object-fit: cover;
+    margin: 10px auto;
+}
+
+.team-member h3 {
+    margin: 0 0 10px 0 !important;
+}
+
+#name {
+    margin-bottom: 0;
+}
+
+
+/* CSS for Software Tiles */
+.card .overlays {
+    height: 0px;
+    margin-left: auto;
+}
+
+.card .overlays img {
+    max-height: 100px;
+    max-width: 120px;
+    margin: 5px;
+    position: relative;
+    z-index: 2;
+}
+
+.card .overlays img:nth-child(2) {
+    margin-left: 108px;
+}
+
+.card .image img {
+    height: 150px !important;
+    width: 150px !important;
+    margin: 5px auto;
+}
+
+.tool-header {
+    display: inline-flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.tool-header .header {
+    font-size: larger;
+}
+
+.header-icons {
+    margin-left: auto;
+    font-size: x-large;
+}
+
+.tool-card {
+    display: inline-flex;
+    flex-direction: row;
+    margin: 10px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tool-card img {
+    width: 150px; /* Adjust image size as needed */
+    margin: 5px 30px 5px 0px;
+}
+
+.tool-headline {
+    display: inline-flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.tool-metrics {
+    display: inline-flex;
+    flex-direction: row;
+    margin-left: auto;
+}
+
+.tool-metrics div {
+   margin-left: 50px;
+   font-size: initial;
+}
+
+
+.main.menu {
+    margin-top: 4em;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    transition:
+        box-shadow 0.5s ease,
+        padding 0.5s ease
+    ;
+}
+.main.menu .item img.logo {
+    margin-right: 1.5em!important;
+}
+
+.overlay {
+    float: left;
+    margin: 0em 3em 1em 0em;
+}
+
+.overlay .menu {
+    position: relative;
+    left: 0;
+    transition: left 0.5s ease;
+}
+
+.main.menu.fixed {
+    background-color: #FFFFFF;
+    border: 1px solid #DDD;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.twitter-feed {
+    width: 100%;
+}
+
+.twitter-timeline {
+    padding: 0.5em 10%;
+}
+
+.ui.button.cci_green {
+    background-color: #00965c!important;
+    color: white;
+}
+
+.ui.button.cci_green:hover {
+    background-color: #00574f!important;
+    color: white;
+}
+
+/* Carousel */
+
+.carousel {
+    height: 400px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0 10px 30px 10px;
+}
+
+.carousel_button i:hover {
+    color: #00965c;
+    opacity: 100%;
+}
+
+.carousel_button i {
+    font-size: xxx-large !important;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 50%;
+}
+
+/* Form */
+.checkbox {
+    margin-right: 20px;
+}
+
+/* Footer */
+footer {
+    height: 100px;
+}

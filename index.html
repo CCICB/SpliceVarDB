@@ -12,7 +12,6 @@
 	    <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SpliceVarDB</title>
-        <link rel="stylesheet" href="static/css/home.css">
         <!-- <link rel="stylesheet" href="/static/css/home.css"> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <link href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/sb-1.6.0/sp-2.2.0/sl-1.7.0/datatables.min.css" rel="stylesheet">
@@ -24,8 +23,9 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-        <link rel="icon" href="../src/logo.svg" type="image/svg+xml">
-        <link rel="stylesheet" href="../style.css">
+        <link rel="stylesheet" href="static/css/home.css">
+        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="icon" href="static/images/logo.svg" type="image/svg+xml">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
         <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
 	    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
@@ -149,8 +149,7 @@
                         </div>
                     </div> -->
                     <div class="field template">
-                        <!-- <label>Template Upload (<a href="splicevardb/splicevardb_upload.template.tsv" download>Get Template</a>)</label> -->
-                        <label>Template Upload (<a href="splicevardb_upload.template.tsv" download>Get Template</a>)</label>
+                        <label>Template Upload (<a href="static/splicevardb_upload.template.tsv" download>Get Template</a>)</label>
                         <div class="ui file input">
                             <input type="file" name="templateFile">
                         </div>
@@ -182,7 +181,7 @@
 		        </div>
 	        </div>
 	        <div class="center aligned actions">
-   	            <form class="ui form segment" method="post" action="https://compbio.ccia.org.au/splicevardb/contact.php">
+   	            <form class="ui form segment" method="post" action="contact.php">
 		            <p>New User Registration</p>
     		        <div class="ui error message"></div>
 		            <div class="field">
@@ -269,6 +268,45 @@
 	            </form>
 	        </div>
         </div>  
+        <div id="ForgotPassword" class="ui flyout five wide left" style="overflow-y: auto">
+            <div class="ui center aligned header">Reset Password</div>
+            <div class="center aligned actions">
+                <form class="ui form segment" onsubmit="forgotPasswordSubmit();return false">
+                    <p>Enter your account email address and we will send you a link to reset your password.</p>
+                    <div class="ui error message"></div>
+                    <div class="ui success message" id="forgot_success" hidden>
+                        <p>If that email is registered you will receive a reset link shortly.</p>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input placeholder="Email" name="email" type="text">
+                    </div>
+                    <div class="ui negative button" onclick="$('#ForgotPassword').flyout('hide');$('#Signin').flyout('show')">Back</div>
+                    <div class="ui cci_green submit button">Send Reset Link</div>
+                </form>
+            </div>
+        </div>
+        <div id="ResetPassword" class="ui flyout five wide left" style="overflow-y: auto; top: 0px">
+            <div class="ui center aligned header">Choose New Password</div>
+            <div class="center aligned actions">
+                <form class="ui form segment" onsubmit="resetPasswordSubmit();return false">
+                    <div class="ui error message"></div>
+                    <div class="ui success message" id="reset_success" hidden>
+                        <p>Password updated successfully. You can now <a onclick="$('#ResetPassword').flyout('hide');$('#Signin').flyout('show')">sign in</a>.</p>
+                    </div>
+                    <input type="hidden" name="reset_token">
+                    <div class="field">
+                        <label>New Password</label>
+                        <input placeholder="New password" name="password" type="password">
+                    </div>
+                    <div class="field">
+                        <label>Confirm New Password</label>
+                        <input placeholder="Confirm new password" name="confirm_password" type="password">
+                    </div>
+                    <div class="ui cci_green submit button">Set New Password</div>
+                </form>
+            </div>
+        </div>
         <div id="Signin" class="ui flyout five wide left" style="overflow-y: auto">
             <div class="ui center aligned header">Sign in</div>
 	            <div id="login_form" class="center aligned actions">
@@ -287,6 +325,7 @@
                         <p>Don't have an account? Register <a onclick="
                             $('#Signin').flyout('hide');$('#Terms').flyout('show');
                         ">here</a></p>
+                        <p><a onclick="$('#Signin').flyout('hide');$('#ForgotPassword').flyout('show')">Forgot your password?</a></p>
                     </form>
 	            </div>
                 <div id="welcome_message" class="center aligned actions" hidden>
@@ -305,12 +344,12 @@
 	    <div class="ui borderless main menu sticky">
             <div class="ui nav container">
 		        <div class="header"><a class="item">
-           	        <img style="height: 40px; width: 40px;" class="logo" src="../src/splicevardb.png">
+           	        <img style="height: 40px; width: 40px;" class="logo" src="static/images/splicevardb.png">>
 		            <b>SpliceVarDB</b></a>
 		        </div>
                 <a id="TOU_pull" class="item">Register</a>
                 <a id="Login_pull" class="item">Sign in</a>
-                <a href="https://compbio.ccia.org.au/splicevardb-api/doc/" target="_blank" class="item">API</a>
+                <a href="/splicevardb-api/doc/" target="_blank" class="item">API</a>
                 <a id="Submit_pull" class="item">Submit Variants</a>
                 <a class="item" href="https://doi.org/10.1016/j.ajhg.2024.08.002" target="_blank">Publication</a>
                 <a href="https://compbio.ccia.org.au" target="_blank" class="item">Lab Home</a>
@@ -354,6 +393,6 @@
         </div>
     </div>
 </body>
+<!-- <script src="splicevardb/static/js/home.js" defer></script> -->
 <script src="static/js/home.js" defer></script>
-<!-- <script src="static/js/home.js" defer></script> -->
 </html>
