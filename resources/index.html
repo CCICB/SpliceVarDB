@@ -181,7 +181,7 @@
 		        </div>
 	        </div>
 	        <div class="center aligned actions">
-   	            <form class="ui form segment" method="post" action="https://compbio.ccia.org.au/splicevardb/contact.php">
+   	            <form class="ui form segment" onsubmit="emailRequest();return false">
 		            <p>New User Registration</p>
     		        <div class="ui error message"></div>
 		            <div class="field">
@@ -260,11 +260,10 @@
       			            <label>I agree to the terms and conditions*</label>
     		            </div>
   		            </div>
-                
+                    <div class="ui success message" id="contact_success" hidden>Your request has been submitted to the data access committee. You will be contacted shortly.</div>
 		            <div class="ui negative button">Cancel</div>
                     <div class="ui cci_green submit button" id="register_button" onclick="termsSubmit()">Register</div>
-                    <div class="ui cci_green submit button" id="request_button" onclick="emailRequest()">Submit Request</div>
-                    <input type="submit" name="submit" value="Send" class="ui button submit" id="secret_tunnel">
+                    <div class="ui cci_green submit button" id="request_button">Submit Request</div>
 	            </form>
 	        </div>
         </div>  
