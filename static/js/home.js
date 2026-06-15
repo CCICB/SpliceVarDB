@@ -190,6 +190,7 @@ function displayLoader() {
 $('#Submit_pull').hide();
 
 $('#TOU_pull').on("click", function() {
+    $('#contact_success').hide();
     $('#Terms').flyout('show');
     $('.ui.dropdown').dropdown();
 });
@@ -463,12 +464,39 @@ async function termsSubmit() {
     }
 }
 
-function emailRequest() {
+async function emailRequest() {
     if ($('#Terms form').form('is valid')) {
-	    var $form = $('#Terms form')
-	    var values = $form.form('get values')
-        alert('Your request has been submitted to the data access committee, you will be contacted shortly.')
-        $('#secret_tunnel').trigger('click');
+        const $form = $('#Terms form');
+        const $btn = $('#request_button');
+        const values = $form.form('get values');
+        $btn.addClass('loading disabled');
+        try {
+            const response = await fetch('/splicevardb-api/contact/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: values.name,
+                    email: values.email,
+                    affiliation: values.affiliation,
+                    field: values.field,
+                    size: values.size,
+                    role: values.role,
+                    purpose_commercial: values.purpose_commercial,
+                    spliceai: values.spliceai === 'on',
+                }),
+            });
+            if (response.ok) {
+                $form[0].reset();
+                $('#contact_success').show();
+            } else {
+                const data = await response.json().catch(() => ({}));
+                $form.form('add errors', [data.message || 'Something went wrong. Please try again.']);
+            }
+        } catch {
+            $form.form('add errors', ['Network error. Please try again.']);
+        } finally {
+            $btn.removeClass('loading disabled');
+        }
     }
 }
 
