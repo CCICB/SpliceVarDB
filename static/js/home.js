@@ -471,7 +471,7 @@ async function emailRequest() {
         const values = $form.form('get values');
         $btn.addClass('loading disabled');
         try {
-            const response = await fetch(`${splicevardbAPI}/splicevardb-api/contact/`, {
+            const response = await fetch(`${splicevardbAPI}/contact/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
