@@ -181,7 +181,7 @@
 		        </div>
 	        </div>
 	        <div class="center aligned actions">
-   	            <form class="ui form segment" onsubmit="emailRequest();return false">
+   	            <form class="ui form segment" onsubmit="return false">
 		            <p>New User Registration</p>
     		        <div class="ui error message"></div>
 		            <div class="field">
@@ -263,7 +263,7 @@
                     <div class="ui success message" id="contact_success" hidden>Your request has been submitted to the data access committee. You will be contacted shortly.</div>
 		            <div class="ui negative button">Cancel</div>
                     <div class="ui cci_green submit button" id="register_button" onclick="termsSubmit()">Register</div>
-                    <div class="ui cci_green submit button" id="request_button">Submit Request</div>
+                    <div class="ui cci_green submit button" id="request_button" onclick="emailRequest()">Submit Request</div>
 	            </form>
 	        </div>
         </div>  
