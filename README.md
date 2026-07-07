@@ -1,4 +1,4 @@
-# SpliceVarDB <img src="splicevardb.png" align="right" height="120"/>
+# SpliceVarDB <img src="static/images/splicevardb.png" align="right" height="120"/>
 
 Welcome to the SpliceVarDB website repository!
 
@@ -16,6 +16,10 @@ This repository contains the following:
 ## Variant Information
 
 Please note that this repository does not contain a database of all the variants held in SpliceVarDB. You can download this information directly from the [SpliceVarDB website](https://splicevardb.org).
+
+## Contributing
+
+We welcome pull requests from either the [GitHub](https://github.com/CCICB/SpliceVarDB) or [Bitbucket](https://bitbucket.org/cciacb/splicevardb) side of this project. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started, and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for internal development/release details.
 
 ## License
 
