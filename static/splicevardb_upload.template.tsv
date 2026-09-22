@@ -1,5 +1,5 @@
 ## Thank you for submitting variants to SpliceVarDB
-## Upload to https://compbio.ccia.org.au/splicevardb/ or email to mcowley@ccia.org.au
+## Upload to https://splicevardb.org/
 ## Fields are optional, but if we cannot determine the variant's coordinates, we cannot include the variant
 ## We prefer hg38 coordinates
 ## Please submit one entry per validation type (including replicates)
